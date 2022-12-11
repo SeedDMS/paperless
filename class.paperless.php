@@ -319,9 +319,14 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				}
 			}
 
+			/* The start and end date for e.g. 2012-12-10 is
+			 * 2022-12-09 and 2022-12-11
+			 * Because makeTsFromDate() returns the start of the day
+			 * one day has to be added.
+			 */
 			$astart = 0;
 			if(isset($params['added__date__gt'])) {
-				$astart = (int) makeTsFromDate($params['added__date__gt']);
+				$astart = (int) makeTsFromDate($params['added__date__gt'])+86400;
 			}
 			$aend = 0;
 			if(isset($params['added__date__lt'])) {
