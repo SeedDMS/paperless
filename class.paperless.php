@@ -516,9 +516,16 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				if($lc) {
 					return $response->withJson(array(
 						'original_checksum'=>$lc->getChecksum(),
-						'original_size'=>$lc->getFilesize(),
-						'original_mimetype'=>$lc->getMimeType(),
-						'has_archived_version'=>false
+						'original_size'=>(int) $lc->getFilesize(),
+						'original_mime_type'=>$lc->getMimeType(),
+						'media_filename'=>$lc->getOriginalFileName(),
+						'has_archive_version'=>false,
+						'original_metadata'=>[],
+						'archive_checksum'=>$lc->getChecksum(),
+						'archive_media_filename'=>$lc->getOriginalFileName(),
+						'original_filename'=>$lc->getOriginalFileName(),
+						'archive_size'=>(int) $lc->getFilesize(),
+						'archive_metadata'=>[],
 					), 200);
 				} else {
 					return $response->withStatus(403);
