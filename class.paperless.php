@@ -555,13 +555,22 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				return $response->withStatus(403);
 
 			$data = $request->getParsedBody();
-			$logger->log(var_export($data, true), PEAR_LOG_INFO);
+//			$logger->log(var_export($data, true), PEAR_LOG_INFO);
 			$uploadedFiles = $request->getUploadedFiles();
 			if (count($uploadedFiles) == 0) {
+				$logger->log('No files uploaded', PEAR_LOG_ERR);
 				return $response->withJson(getMLText("paperless_no_files_uploaded"), 400);
 			}
-			$origfilename = null;
+
 			$file_info = array_pop($uploadedFiles);
+
+			$maxuploadsize = SeedDMS_Core_File::parse_filesize($settings->_maxUploadSize);
+			if ($maxuploadsize && $file_info->getSize() > $maxuploadsize) {
+				$logger->log('File too large ('.$file_info->getSize().' > '.$maxuploadsize.')', PEAR_LOG_ERR);
+				return $response->withJson(getMLText("paperless_upload_maxsize"), 400);
+			}
+
+			$origfilename = null;
 			if ($origfilename == null)
 				$origfilename = $file_info->getClientFilename();
 			if(!empty($data['title']))
