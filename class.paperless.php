@@ -677,10 +677,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				} else {
 					$errmsg = $err;
 				}
-				$logger->log($errmsg, PEAR_LOG_NOTICE);
+				$logger->log('Upload failed: '.$errmsg, PEAR_LOG_NOTICE);
 				return $response->withJson(getMLText('paperless_upload_failed'), 500);
 			} else {
-				$logger->log(getMLText('paperless_upload_succeded'), PEAR_LOG_NOTICE);
+				$logger->log('Upload succeeded', PEAR_LOG_NOTICE);
 				/* Turn off for now, because file_info is not an array
 				if($controller->hasHook('cleanUpDocument')) {
 					$controller->callHook('cleanUpDocument', $document, $file_info);
