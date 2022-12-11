@@ -191,7 +191,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$index = $fulltextservice->Indexer();
 		if($index) {
 			$lucenesearch = $fulltextservice->Search();
-			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), $order);
+			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), array());
 			if($searchresult === false) {
 				return $response->withStatus(500);
 			} else {
