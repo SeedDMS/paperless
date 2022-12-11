@@ -581,6 +581,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			/* Check if name already exists in the folder */
 			if(!$settings->_enableDuplicateDocNames) {
 				if($mfolder->hasDocumentByName($docname)) {
+					$logger->log('Duplicate document name '.$docname, PEAR_LOG_ERR);
 					return $response->withJson(getMLText("document_duplicate_name"), 409);
 				}
 			}
