@@ -789,6 +789,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$settings = $this->container->config;
 		$conversionmgr = $this->container->conversionmgr;
 		$logger = $this->container->logger;
+		$notifier = $this->container->notifier;
 		$fulltextservice = $this->container->fulltextservice;
 
 		if (!isset($args['id']) || !$args['id'])
@@ -796,12 +797,34 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		$document = $dms->getDocument($args['id']);
 		if($document) {
+			$folder = $document->getFolder();
+			/* Remove all preview images. */
+			require_once("SeedDMS/Preview.php");
+			$previewer = new SeedDMS_Preview_Previewer($settings->_cacheDir);
+			$previewer->deleteDocumentPreviews($document);
+
+			/* Get the notify list before removing the document
+			 * Also inform the users/groups of the parent folder
+			 * Getting the list now will keep them in the document object
+			 * even after the document has been deleted.
+			 */
+			$dnl =	$document->getNotifyList();
+			$fnl =	$folder->getNotifyList();
+			$docname = $document->getName();
+
 			$controller = Controller::factory('RemoveDocument', array('dms'=>$dms, 'user'=>$userobj));
 			$controller->setParam('document', $document);
 			$controller->setParam('fulltextservice', $fulltextservice);
 			if(!$controller()) {
-				$logger->log($controller->getErrorMsg(), PEAR_LOG_NOTICE);
+				$logger->log($controller->getErrorMsg(), PEAR_LOG_ERR);
 				return $response->withStatus(500);
+			}
+			$logger->log('Document deleted', PEAR_LOG_INFO);
+			if ($notifier){
+				/* $document still has the data from the just deleted document,
+				 * which is just enough to send the email.
+				 */
+				$notifier->sendDeleteDocumentMail($document, $userobj);
 			}
 		}
 		return $response->withStatus(200);
