@@ -739,7 +739,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				}
 			} 
 		}
-		return $response->withStatus(200);
+		return $response->withStatus(204);
 	} /* }}} */
 
 	function put_documents($request, $response, $args) { /* {{{ */
