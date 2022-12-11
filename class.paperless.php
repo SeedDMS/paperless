@@ -595,7 +595,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				if($cat = $dms->getDocumentCategory((int) $data['tags']))
 					$cats[] = $cat;
 			}
-//			$logger->log(var_export($cats, true), PEAR_LOG_INFO);
+
 			$userfiletmp = $file_info->file;
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$userfiletype = finfo_file($finfo, $userfiletmp);
@@ -609,6 +609,26 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			$approvers["i"] = array();
 			$approvers["g"] = array();
 			$workflow = null;
+
+			if($settings->_workflowMode == 'traditional' || $settings->_workflowMode == 'traditional_only_approval') {
+				// add mandatory reviewers/approvers
+				if($settings->_workflowMode == 'traditional') {
+					$mreviewers = getMandatoryReviewers($mfolder, $userobj);
+					if($mreviewers['i'])
+						$reviewers['i'] = array_merge($reviewers['i'], $mreviewers['i']);
+					if($mreviewers['g'])
+						$reviewers['g'] = array_merge($reviewers['g'], $mreviewers['g']);
+				}
+				$mapprovers = getMandatoryApprovers($mfolder, $userobj);
+				if($mapprovers['i'])
+					$approvers['i'] = array_merge($approvers['i'], $mapprovers['i']);
+				if($mapprovers['g'])
+					$approvers['g'] = array_merge($approvers['g'], $mapprovers['g']);
+			} elseif($settings->_workflowMode == 'advanced') {
+				if($workflows = $userobj->getMandatoryWorkflows()) {
+					$workflow = array_shift($workflows);
+				}
+			}
 
 			$comment = '';
 			$expires = null;
