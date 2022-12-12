@@ -101,10 +101,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$g = hexdec(substr($hexcolor, 3, 2));
 		$b = hexdec(substr($hexcolor, 5, 2));
 		$yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
-		return ($yiq >= 128) ? '000000' : 'ffffff';
+		return ($yiq >= 148) ? '000000' : 'ffffff';
 	}
 
-	protected function __getCategoryData($category) { /* {{{ */
+	protected function __getCategoryData($category, $inboxtags) { /* {{{ */
 		$color = substr(md5($category->getName()), 0, 6);
 		$data = [
 			'id'=>(int)$category->getId(),
@@ -115,7 +115,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			'match'=>'',
 			'matching_algorithm'=>6,
 			'is_insensitive'=>true,
-			'is_inbox_tag'=>$category->getName() == 'Computer',
+			'is_inbox_tag'=>in_array($category->getId(), $inboxtags),
 			'document_count'=>0
 		];
 		return $data;
