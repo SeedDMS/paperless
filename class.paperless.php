@@ -406,6 +406,50 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		return $response->withJson($data, 200);
 	} /* }}} */
 
+	function statstotal($request, $response) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$fulltextservice = $this->container->fulltextservice;
+		$logger = $this->container->logger;
+
+		if(false === ($categories = $dms->getDocumentCategories())) {
+			return $response->withJson(array('results'=>null), 500);
+		}
+
+		if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
+			if(!($startfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
+				$startfolder = $dms->getFolder($settings->_rootFolderID);
+		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($startfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
+			$startfolder = $dms->getFolder($settings->_rootFolderID);
+
+		$index = $fulltextservice->Indexer();
+		if($index) {
+			$lucenesearch = $fulltextservice->Search();
+			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), array());
+			if($searchresult === false) {
+				return $response->withStatus(500);
+			} else {
+				$recs = array();
+				$facets = $searchresult['facets'];
+				$logger->log(var_export($facets, true), PEAR_LOG_INFO);
+			}
+		}
+
+		$data = array(
+			'documents_total'=>$searchresult['count'],
+			'document_inbox'=>0,
+		);
+		$inboxtags = [];
+		if(!empty($settings->_extensions['paperless']['inboxtags']) && $inboxtags = explode(',', $settings->_extensions['paperless']['inboxtags'])) {
+			foreach($inboxtags as $inboxtagid)
+				if($inboxtag = $dms->getDocumentCategory((int) $inboxtagid))
+					$data['document_inbox'] += (int) $facets['category'][$inboxtag->getName()];
+		}
+
+		return $response->withJson($data, 200);
+	} /* }}} */
+
 	function fetch_thumb($request, $response, $args) { /* {{{ */
 		return $response->withRedirect($request->getUri()->getBasePath().'/api/documents/'.$args['id'].'/thumb/', 302);
 	} /* }}} */
@@ -989,6 +1033,7 @@ class SeedDMS_ExtPaperless_RestAPI { /* {{{ */
 		$app->delete('/api/documents/{id}/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':delete_documents');
 		$app->get('/api/search/autocomplete/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':autocomplete');
 		$app->get('/api/ui_settings/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':ui_settings');
+		$app->get('/api/statstotal/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':statstotal');
 
 		return null;
 	} /* }}} */
