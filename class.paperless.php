@@ -159,7 +159,11 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			else {
 				if(!empty($settings->_extensions['paperless']['jwtsecret'])) {
 					$token = new SeedDMS_JwtToken($settings->_extensions['paperless']['jwtsecret']);
-					if(!$tokenstr = $token->jwtEncode($userobj->getId().':'.(time()+84600))) {
+					if(!empty($settings->_extensions['paperless']['tokenlivetime']))
+						$days = (int) $settings->_extensions['paperless']['tokenlivetime'];
+					else
+						$days = 1000;
+					if(!$tokenstr = $token->jwtEncode($userobj->getId().':'.(time()+$days*84600))) {
 						return $response->withStatus(403);
 					}
 					return $response->withJson(array('token'=>$tokenstr), 200);
