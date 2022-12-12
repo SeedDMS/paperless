@@ -187,7 +187,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		}
 
 		if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
-			if(!($startfolder = $userobj->getHomeFolder()))
+			if(!($startfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
 				$startfolder = $dms->getFolder($settings->_rootFolderID);
 		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($startfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
 			$startfolder = $dms->getFolder($settings->_rootFolderID);
@@ -258,7 +258,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$logger->log(var_export($params, true), PEAR_LOG_INFO);
 
 		if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
-			if(!($startfolder = $userobj->getHomeFolder()))
+			if(!($startfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
 				$startfolder = $dms->getFolder($settings->_rootFolderID);
 		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($startfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
 			$startfolder = $dms->getFolder($settings->_rootFolderID);
@@ -594,7 +594,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$notifier = $this->container->notifier;
 
 		if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
-			if(!($mfolder = $userobj->getHomeFolder()))
+			if(!($mfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
 				$mfolder = $dms->getFolder($settings->_rootFolderID);
 		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($mfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
 			$mfolder = $dms->getFolder($settings->_rootFolderID);
