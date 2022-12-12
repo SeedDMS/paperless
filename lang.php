@@ -5,6 +5,7 @@ $__lang['en_GB'] = array(
 	'paperless_missing_target_folder'=>'Missing target folder',
 	'paperless_no_files_uploaded'=>'No files uploaded',
 	'paperless_upload_maxsize'=>'Max file size exceeded',
+	'paperless_token_has_expired'=>'Token has expired. Login again before you proceed.',
 );
 $__lang['de_DE'] = array(
 	'paperless_upload_succeded'=>'Erfolgreich hochgeladen',
@@ -12,5 +13,6 @@ $__lang['de_DE'] = array(
 	'paperless_missing_target_folder'=>'Zielordner nicht vorhanden',
 	'paperless_no_files_uploaded'=>'Keine Dateien hochgeladen',
 	'paperless_upload_maxsize'=>'Maximale Dateigröße überschritten',
+	'paperless_token_has_expired'=>'Token abgelaufen. Melden Sie sich bitte neu an.',
 );
 
