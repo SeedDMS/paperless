@@ -23,11 +23,18 @@ $EXT_CONF['paperless'] = array(
 			'help'=>'This is used for creating a token which is needed to authenticate by token',
 			'type'=>'password',
 		),
+		'tokenlivetime' => array(
+			'title'=>'Days before token expires',
+			'help'=>'If token based authentication is used, this is the time before the token expires. Once it has expired the user has to log in again.',
+			'type'=>'numeric',
+		),
 		'inboxtags' => array(
 			'title'=>'Categories treated as inbox tag',
 			'help'=>'These categories are marked as inbox tag when the list of tags is retrieved.',
 			'type'=>'select',
+			'multiple'=>true,
 			'internal'=>'categories',
+			'allow_empty'=>true,
 		),
 	),
 	'constraints' => array(
