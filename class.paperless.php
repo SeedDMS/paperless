@@ -520,6 +520,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	} /* }}} */
 
 	function documents_download($request, $response, $args) { /* {{{ */
+		require_once "SeedDMS/Preview.php";
 		$dms = $this->container->dms;
 		$userobj = $this->container->userobj;
 		$settings = $this->container->config;
@@ -535,13 +536,36 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			if($document->getAccessMode($userobj) >= M_READ) {
 				$lc = $document->getLatestContent();
 				if($lc) {
-					if (pathinfo($document->getName(), PATHINFO_EXTENSION) == $lc->getFileType())
-						$filename = $document->getName();
-					else
-						$filename = $document->getName().$lc->getFileType();
-					$file = $dms->contentDir . $lc->getPath();
-					if(!($fh = @fopen($file, 'rb'))) {
-						return $response->withJson(array('success'=>false, 'message'=>'', 'data'=>''), 500);
+					if($lc->getMimeType() == 'application/pdf') {
+						if (pathinfo($document->getName(), PATHINFO_EXTENSION) == $lc->getFileType())
+							$filename = $document->getName();
+						else
+							$filename = $document->getName().$lc->getFileType();
+						$file = $dms->contentDir . $lc->getPath();
+						if(!($fh = @fopen($file, 'rb'))) {
+							return $response->withJson(array('success'=>false, 'message'=>'', 'data'=>''), 500);
+						}
+						$filesize = filesize($dms->contentDir . $lc->getPath());
+					} else {
+						$previewer = new SeedDMS_Preview_PdfPreviewer($settings->_cacheDir);
+						if($conversionmgr)
+							$previewer->setConversionMgr($conversionmgr);
+						else
+							$previewer->setConverters(isset($settings->_converters['pdf']) ? $settings->_converters['pdf'] : array());
+						if(!$previewer->hasPreview($lc))
+							$previewer->createPreview($lc);
+						if(!$previewer->hasPreview($lc)) {
+							$logger->log('Creating pdf preview failed', PEAR_LOG_ERR);
+							return $response->withJson('', 500);
+						} else {
+							$filename = $document->getName().".pdf";
+							$file = $previewer->getFileName($lc).".pdf";
+							$filesize = filesize($file);
+							if(!($fh = @fopen($file, 'rb'))) {
+								$logger->log('Creating pdf preview failed', PEAR_LOG_ERR);
+								return $response->withJson('', 500);
+							}
+						}
 					}
 					$stream = new \Slim\Http\Stream($fh); // create a stream instance for the response body
 
@@ -549,7 +573,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 						->withHeader('Content-Description', 'File Transfer')
 						->withHeader('Content-Transfer-Encoding', 'binary')
 						->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
-						->withHeader('Content-Length', filesize($dms->contentDir . $lc->getPath()))
+						->withHeader('Content-Length', $filesize)
 						->withHeader('Expires', '0')
 						->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
 						->withHeader('Pragma', 'no-cache')
