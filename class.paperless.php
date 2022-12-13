@@ -201,13 +201,15 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			} else {
 				$recs = array();
 				$facets = $searchresult['facets'];
-				$logger->log(var_export($facets, true), PEAR_LOG_INFO);
 			}
 		}
 
 		$data = [];
+		$inboxtags = [];
+		if(!empty($settings->_extensions['paperless']['inboxtags']))
+		 	$inboxtags = explode(',', $settings->_extensions['paperless']['inboxtags']);
 		foreach($categories as $category) {
-			$tmp = $this->__getCategoryData($category);
+			$tmp = $this->__getCategoryData($category, $inboxtags);
 			if(isset($facets['category'][$category->getName()]))
 				$tmp['document_count'] = (int) $facets['category'][$category->getName()];
 			$data[] = $tmp;
