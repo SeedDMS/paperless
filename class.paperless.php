@@ -146,7 +146,6 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$authenticator = $this->container->authenticator;
 		$logger = $this->container->logger;
 
-		$logger->log(var_export($request->getParsedBody(), true), PEAR_LOG_INFO);
 		$data = $request->getParsedBody();
 		if(empty($data['username'])) {
 			$body = $request->getBody();
