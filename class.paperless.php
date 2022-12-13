@@ -270,8 +270,11 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if($fullsearch) {
 			if (isset($params["query"]) && is_string($params["query"])) {
 				$query = $params["query"];
-			}
-			else {
+			} elseif (isset($params["title_content"]) && is_string($params["title_content"])) {
+				$query = $params['title_content'];
+			} elseif (isset($params["title__icontains"]) && is_string($params["title__icontains"])) {
+				$query = $params['title__icontains'];
+			} else {
 				$query = "";
 			}
 
