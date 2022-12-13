@@ -342,11 +342,11 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 			$index = $fulltextservice->Indexer();
 			if($index) {
+				$limit = isset($params['page_size']) ? (int) $params['page_size'] : 25;
+				$offset = (isset($params['page']) && $params['page'] > 0) ? ($params['page']-1)*$limit : 0;
 				$lucenesearch = $fulltextservice->Search();
-				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), $order);
-				if($searchresult === false) {
-					return $response->withStatus(500);
-				} else {
+				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>$limit, 'offset'=>$offset), $order);
+				if($searchresult) {
 					$recs = array();
 					$facets = $searchresult['facets'];
 					$dcount = 0;
@@ -363,11 +363,23 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 							}
 						}
 					}
+					$curpage = $params['page'];
+					if($offset + $limit < $searchresult['count']) {
+						$params['page'] = $curpage+1;
+						$next = $request->getUri()->getBasePath().'/api/documents?'.http_build_query($params);
+					} else
+						$next = null;
+					if($offset > 0) {
+						$params['page'] = $curpage-1;
+						$prev = $request->getUri()->getBasePath().'/api/documents?'.http_build_query($params);
+					} else
+						$prev = null;
+					return $response->withJson(array('count'=>$searchresult['count'], 'next'=>$next, 'previous'=>$prev, 'offset'=>$offset, 'limit'=>$limit, 'results'=>$recs), 200);
 				}
 			}
 		}
+		return $response->withJson('Error', 500);
 
-		return $response->withJson(array('count'=>count($recs), 'next'=>null, 'previous'=>null, 'results'=>$recs), 200);
 	} /* }}} */
 
 	function autocomplete($request, $response) { /* {{{ */
