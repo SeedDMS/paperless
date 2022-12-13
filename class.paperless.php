@@ -916,7 +916,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$notifier->sendDeleteDocumentMail($document, $userobj);
 			}
 		}
-		return $response->withStatus(200);
+		return $response->withStatus(204);
 	} /* }}} */
 } /* }}} */
 
