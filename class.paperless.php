@@ -316,12 +316,13 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			}
 			/* tags__id__in is used when getting the documents of the inbox */
 			if(isset($params['tags__id__in'])) {
-				$catid = (int) $params['tags__id__in'];
-				if($catid) {
-					if($cat = $dms->getDocumentCategory($catid)) {
-						$categories[] = $cat;
-						$categorynames[] = $cat->getName();
-					}
+				$catids = explode(',', $params['tags__id__in']);
+				if($catids) {
+					foreach($catids as $catid)
+						if($cat = $dms->getDocumentCategory($catid)) {
+							$categories[] = $cat;
+							$categorynames[] = $cat->getName();
+						}
 				}
 			}
 
