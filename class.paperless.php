@@ -947,7 +947,7 @@ class SeedDMS_ExtPaperless_RestAPI_Auth { /* {{{ */
 						$tmp = explode(':', json_decode($tokenstr, true));
 						if($tmp[1] < time()) {
 							$logger->log("Jwt has expired at ".date('Y-m-d H:i:s', $tmp[1]), PEAR_LOG_ERR);
-							return $response->withJson("Token has expired", 403);
+							return $response->withJson(getMLText('paperless_token_has_expired'), 403);
 						} else {
 							$logger->log("Token is valid till ".date('Y-m-d H:i:s', $tmp[1]), PEAR_LOG_DEBUG);
 						}
