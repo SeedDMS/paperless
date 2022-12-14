@@ -292,7 +292,6 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		require_once('class.Paperless.php');
 
-		echo $userobj->getLogin();
 		$views = SeedDMS_PaperlessView::getAllInstances($userobj, $dms);
 
 		$data = [];
