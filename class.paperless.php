@@ -258,7 +258,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if($cat) {
 			$documents = $cat->getDocumentsByCategory(10);
 			if($documents) {
-				$logger->log('Will not remove because cat has documents', PEAR_LOG_INFO);
+				$logger->log('Will not remove because cat has documents', PEAR_LOG_WARNING);
 				return $response->withStatus(400);
 			} else {
 				$logger->log('remove categorie', PEAR_LOG_INFO);
@@ -314,12 +314,12 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		require_once('class.Paperless.php');
 
 		$data = $request->getParsedBody();
-		$logger->log(var_export($data, true), PEAR_LOG_INFO);
+		$logger->log(var_export($data, true), PEAR_LOG_DEBUG);
 
 		$view = new SeedDMS_PaperlessView($data['id'], $userobj, $data);
 		$view->setDMS($dms);
 		if($newview = $view->save()) {
-//		$logger->log(var_export($newview, true), PEAR_LOG_INFO);
+//		$logger->log(var_export($newview, true), PEAR_LOG_DEBUG);
 			return $response->withJson($newview->getView(), 201);
 		} else {
 			return $response->withJson('', 501);
@@ -364,7 +364,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$logger = $this->container->logger;
 
 		$params = $request->getQueryParams();
-		$logger->log(var_export($params, true), PEAR_LOG_INFO);
+		$logger->log(var_export($params, true), PEAR_LOG_DEBUG);
 
 		if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
 			if(!($startfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
@@ -501,7 +501,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		$params = $request->getQueryParams();
 		$query = $params['term'];
-		$logger->log(var_export($params, true), PEAR_LOG_INFO);
+		$logger->log(var_export($params, true), PEAR_LOG_DEBUG);
 
 		$list = [];
 		$index = $fulltextservice->Indexer();
@@ -557,7 +557,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			} else {
 				$recs = array();
 				$facets = $searchresult['facets'];
-				$logger->log(var_export($facets, true), PEAR_LOG_INFO);
+				$logger->log(var_export($facets, true), PEAR_LOG_DEBUG);
 			}
 		}
 
@@ -642,7 +642,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if (!isset($args['id']) || !$args['id'])
 			return $response->withStatus(404);
 	
-		$logger->log('Download doc '.$args['id'], PEAR_LOG_INFO);
+		$logger->log('Get preview of doc '.$args['id'], PEAR_LOG_INFO);
 		$document = $dms->getDocument($args['id']);
 		if($document) {
 			if($document->getAccessMode($userobj) >= M_READ) {
@@ -803,7 +803,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				return $response->withStatus(403);
 
 			$data = $request->getParsedBody();
-//			$logger->log(var_export($data, true), PEAR_LOG_INFO);
+//			$logger->log(var_export($data, true), PEAR_LOG_DEBUG);
 			$uploadedFiles = $request->getUploadedFiles();
 			if (count($uploadedFiles) == 0) {
 				$logger->log('No files uploaded', PEAR_LOG_ERR);
@@ -925,10 +925,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				} else {
 					$errmsg = $err;
 				}
-				$logger->log('Upload failed: '.$errmsg, PEAR_LOG_NOTICE);
+				$logger->log('Upload failed: '.$errmsg, PEAR_LOG_ERR);
 				return $response->withJson(getMLText('paperless_upload_failed'), 500);
 			} else {
-				$logger->log('Upload succeeded', PEAR_LOG_NOTICE);
+				$logger->log('Upload succeeded', PEAR_LOG_INFO);
 				/* Turn off for now, because file_info is not an array
 				if($controller->hasHook('cleanUpDocument')) {
 					$controller->callHook('cleanUpDocument', $document, $file_info);
@@ -1151,7 +1151,7 @@ class SeedDMS_ExtPaperless_RestAPI_Auth { /* {{{ */
 									return $response->withStatus(403);
 								}
 							} else {
-								$logger->log("Login with apikey '".$tmp[1]."' failed", PEAR_LOG_INFO);
+								$logger->log("Login with apikey '".$tmp[1]."' failed", PEAR_LOG_ERR);
 								return $response->withStatus(403);
 							}
 							$dms->setUser($userobj);
@@ -1165,7 +1165,7 @@ class SeedDMS_ExtPaperless_RestAPI_Auth { /* {{{ */
 					$kk = explode(':', base64_decode($tmp[1]));
 					$userobj = $authenticator->authenticate($kk[0], $kk[1]);
 					if(!$userobj) {
-						$logger->log("Login with basic authentication for '".$kk[0]."' failed", PEAR_LOG_INFO);
+						$logger->log("Login with basic authentication for '".$kk[0]."' failed", PEAR_LOG_ERR);
 						return $response->withStatus(403);
 					}
 					$dms->setUser($userobj);
