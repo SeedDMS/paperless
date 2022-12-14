@@ -1,0 +1,10 @@
+BEGIN;
+ 
+CREATE TABLE `tblPaperlessView` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `userID` INTEGER NOT NULL default '0' REFERENCES `tblUsers` (`id`) ON DELETE CASCADE,
+  `view` TEXT DEFAULT NULL
+);
+
+COMMIT;
+
