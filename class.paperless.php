@@ -216,6 +216,58 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		return $response->withJson(array('count'=>count($data), 'next'=>null, 'previous'=>null, 'results'=>$data), 200);
 	} /* }}} */
 
+	function post_tag($request, $response) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$logger = $this->container->logger;
+		$fulltextservice = $this->container->fulltextservice;
+		$notifier = $this->container->notifier;
+
+		if(!$userobj->isAdmin())
+			return $response->withStatus(404);
+
+		$data = $request->getParsedBody();
+		$oldcat = $dms->getDocumentCategoryByName($data['name']);
+		if (is_object($oldcat)) {
+			return $response->withJson(getMLText('paperless_tag_already_exists'), 400);
+		}
+		$newCategory = $dms->addDocumentCategory($data['name']);
+		if (!$newCategory)
+			return $response->withJson(getMLText('paperless_could_not_create_tag'), 400);
+
+		return $response->withJson($this->__getCategoryData($newCategory, []), 201);
+	} /* }}} */
+
+	function delete_tag($request, $response, $args) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$conversionmgr = $this->container->conversionmgr;
+		$logger = $this->container->logger;
+		$notifier = $this->container->notifier;
+		$fulltextservice = $this->container->fulltextservice;
+
+		if(!$userobj->isAdmin())
+			return $response->withStatus(404);
+
+		if (!isset($args['id']) || !$args['id'])
+			return $response->withStatus(404);
+
+		$cat = $dms->getDocumentCategory($args['id']);
+		if($cat) {
+			$documents = $cat->getDocumentsByCategory(10);
+			if($documents) {
+				$logger->log('Will not remove because cat has documents', PEAR_LOG_INFO);
+				return $response->withStatus(400);
+			} else {
+				$logger->log('remove categorie', PEAR_LOG_INFO);
+				$cat->remove();
+			}
+		}
+		return $response->withStatus(204);
+	} /* }}} */
+
 	function correspondents($request, $response) { /* {{{ */
 		//file_put_contents("php://stdout", var_dump($request, true));
 
@@ -233,11 +285,67 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	} /* }}} */
 
 	function saved_views($request, $response) { /* {{{ */
-		//file_put_contents("php://stdout", var_dump($request, true));
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$logger = $this->container->logger;
 
-		$views = array(
-		);
-		return $response->withJson(array('count'=>count($views), 'next'=>null, 'previous'=>null, 'results'=>$views), 200);
+		require_once('class.Paperless.php');
+
+		echo $userobj->getLogin();
+		$views = SeedDMS_PaperlessView::getAllInstances($userobj, $dms);
+
+		$data = [];
+		foreach($views as $view) {
+			$tmp = $view->getView();
+			$data[] = $tmp;
+		}
+		return $response->withJson(array('count'=>count($data), 'next'=>null, 'previous'=>null, 'results'=>$data), 200);
+	} /* }}} */
+
+	function post_saved_views($request, $response) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$logger = $this->container->logger;
+		$fulltextservice = $this->container->fulltextservice;
+		$notifier = $this->container->notifier;
+
+		require_once('class.Paperless.php');
+
+		$data = $request->getParsedBody();
+		$logger->log(var_export($data, true), PEAR_LOG_INFO);
+
+		$view = new SeedDMS_PaperlessView($data['id'], $userobj, $data);
+		$view->setDMS($dms);
+		if($newview = $view->save()) {
+//		$logger->log(var_export($newview, true), PEAR_LOG_INFO);
+			return $response->withJson($newview->getView(), 201);
+		} else {
+			return $response->withJson('', 501);
+		}
+
+	} /* }}} */
+
+	function delete_saved_views($request, $response, $args) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$conversionmgr = $this->container->conversionmgr;
+		$logger = $this->container->logger;
+		$notifier = $this->container->notifier;
+
+		if (!isset($args['id']) || !$args['id'])
+			return $response->withStatus(404);
+
+		require_once('class.Paperless.php');
+
+		$view = SeedDMS_PaperlessView::getInstance($args['id'], $dms);
+		if($view) {
+			$logger->log('remove saved view', PEAR_LOG_INFO);
+			$view->remove();
+		}
+		return $response->withStatus(204);
 	} /* }}} */
 
 	function storage_paths($request, $response) { /* {{{ */
@@ -1057,13 +1165,17 @@ class SeedDMS_ExtPaperless_RestAPI { /* {{{ */
 				return $response->withStatus(405);
 		});
 		$app->get('/api/tags/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':tags');
+		$app->post('/api/tags/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':post_tag');
+		$app->delete('/api/tags/{id}/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':delete_tag');
 		$app->get('/api/documents/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents');
 		$app->get('/api/correspondents/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':correspondents');
 		$app->get('/api/document_types/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':document_types');
 		$app->get('/api/saved_views/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':saved_views');
+		$app->post('/api/saved_views/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':post_saved_views');
+		$app->delete('/api/saved_views/{id}/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':delete_saved_views');
 		$app->get('/api/storage_paths/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':storage_paths');
 		$app->post('/api/documents/post_document/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':post_document');
-		$app->get('/api/documents/{id}/preview/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_download');
+		$app->get('/api/documents/{id}/preview/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_preview');
 		$app->get('/api/documents/{id}/thumb/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_thumb');
 		$app->get('/fetch/thumb/{id}', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':fetch_thumb');
 		$app->get('/api/documents/{id}/download/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_download');
