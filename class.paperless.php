@@ -627,7 +627,11 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		return $response->withRedirect($request->getUri()->getBasePath().'/api/documents/'.$args['id'].'/download/', 302);
 	} /* }}} */
 
-	function documents_download($request, $response, $args) { /* {{{ */
+	/**
+	 * documents_preview works like documents_download but converts
+	 * documents which are not pdf already into pdf
+	 */
+	function documents_preview($request, $response, $args) { /* {{{ */
 		require_once "SeedDMS/Preview.php";
 		$dms = $this->container->dms;
 		$userobj = $this->container->userobj;
@@ -675,6 +679,53 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 							}
 						}
 					}
+					$stream = new \Slim\Http\Stream($fh); // create a stream instance for the response body
+
+					return $response->withHeader('Content-Type', $lc->getMimeType())
+						->withHeader('Content-Description', 'File Transfer')
+						->withHeader('Content-Transfer-Encoding', 'binary')
+						->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+						->withHeader('Content-Length', $filesize)
+						->withHeader('Expires', '0')
+						->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+						->withHeader('Pragma', 'no-cache')
+						->withBody($stream);
+				} else {
+					return $response->withStatus(403);
+				}
+			} else
+				return $response->withStatus(404);
+		} else {
+			return $response->withStatus(500);
+		}
+	} /* }}} */
+
+	function documents_download($request, $response, $args) { /* {{{ */
+		require_once "SeedDMS/Preview.php";
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$conversionmgr = $this->container->conversionmgr;
+		$logger = $this->container->logger;
+
+		if (!isset($args['id']) || !$args['id'])
+			return $response->withStatus(404);
+	
+		$logger->log('Download doc '.$args['id'], PEAR_LOG_INFO);
+		$document = $dms->getDocument($args['id']);
+		if($document) {
+			if($document->getAccessMode($userobj) >= M_READ) {
+				$lc = $document->getLatestContent();
+				if($lc) {
+					if (pathinfo($document->getName(), PATHINFO_EXTENSION) == $lc->getFileType())
+						$filename = $document->getName();
+					else
+						$filename = $document->getName().$lc->getFileType();
+					$file = $dms->contentDir . $lc->getPath();
+					if(!($fh = @fopen($file, 'rb'))) {
+						return $response->withJson(array('success'=>false, 'message'=>'', 'data'=>''), 500);
+					}
+					$filesize = filesize($dms->contentDir . $lc->getPath());
 					$stream = new \Slim\Http\Stream($fh); // create a stream instance for the response body
 
 					return $response->withHeader('Content-Type', $lc->getMimeType())
@@ -1026,6 +1077,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		}
 		return $response->withStatus(204);
 	} /* }}} */
+
 } /* }}} */
 
 class SeedDMS_ExtPaperless_RestAPI_Auth { /* {{{ */
