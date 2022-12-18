@@ -374,15 +374,26 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$logger->log('Searching for documents in folder '.$startfolder->getId(), PEAR_LOG_DEBUG);
 
 		$fullsearch = true;
+		$query = '';
+		$astart = 0;
+		$aend = 0;
 		if($fullsearch) {
+//			print_r($params);
 			if (isset($params["query"]) && is_string($params["query"])) {
-				$query = $params["query"];
+				if(substr($params["query"], 0, 7) == 'added:[') {
+					$q = substr($params["query"], 7, -1);
+					if($t = explode(' to ', $q, 2)) {
+						$astart = strtotime($t[0]);
+						$aend = strtotime($t[1])+86400;
+//						echo "astart: ".date('Y-m-d', $astart)."\n";
+//						echo "aend: ".date('Y-m-d', $aend);
+					}
+				} else
+					$query = $params["query"];
 			} elseif (isset($params["title_content"]) && is_string($params["title_content"])) {
 				$query = $params['title_content'];
 			} elseif (isset($params["title__icontains"]) && is_string($params["title__icontains"])) {
 				$query = $params['title__icontains'];
-			} else {
-				$query = "";
 			}
 
 			$order = [];
@@ -440,11 +451,9 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			 * Because makeTsFromDate() returns the start of the day
 			 * one day has to be added.
 			 */
-			$astart = 0;
 			if(isset($params['added__date__gt'])) {
 				$astart = (int) makeTsFromDate($params['added__date__gt'])+86400;
 			}
-			$aend = 0;
 			if(isset($params['added__date__lt'])) {
 				$aend = (int) makeTsFromDate($params['added__date__lt']);
 			}
