@@ -65,7 +65,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			if($searchhit = $lucenesearch->getDocument($document->getID())) {
 				$idoc = $searchhit->getDocument();
 				try {
-					$content = htmlspecialchars(mb_strimwidth($idoc->getFieldValue('content'), 0, 1000, '...'));
+					$content = htmlspecialchars(mb_strimwidth($idoc->getFieldValue('content'), 0, 3000, '...'));
 				} catch (Exception $e) {
 				}
 			}
