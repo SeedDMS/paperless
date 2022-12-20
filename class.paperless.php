@@ -399,10 +399,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			$order = [];
 			if (isset($params["ordering"]) && is_string($params["ordering"])) {
 				if($params["ordering"][0] == '-') {
-					$order['dir'] = 'asc';
+					$order['dir'] = 'desc';
 					$orderfield = substr($params["ordering"], 1);
 				} else {
-					$order['dir'] = 'desc';
+					$order['dir'] = 'asc';
 					$orderfield = $params["ordering"];
 				}
 				if(in_array($orderfield, ['created', 'title']))
