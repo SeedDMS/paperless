@@ -407,6 +407,14 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 //						echo "astart: ".date('Y-m-d', $astart)."\n";
 //						echo "aend: ".date('Y-m-d', $aend);
 					}
+				} elseif(substr($params["query"], 0, 9) == 'created:[') {
+					$q = substr($params["query"], 9, -1);
+					if($t = explode(' to ', $q, 2)) {
+						$astart = strtotime($t[0]);
+						$aend = strtotime($t[1])+86400;
+//						echo "astart: ".date('Y-m-d', $astart)."\n";
+//						echo "aend: ".date('Y-m-d', $aend);
+					}
 				} else
 					$query = $params["query"];
 			} elseif (isset($params["title_content"]) && is_string($params["title_content"])) {
