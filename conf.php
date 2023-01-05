@@ -4,7 +4,7 @@ $EXT_CONF['paperless'] = array(
 	'description' => 'This extension adds additional routes to make it behave like a paperless server',
 	'disable' => false,
 	'version' => '1.0.0',
-	'releasedate' => '2022-12-07',
+	'releasedate' => '2023-01-05',
 	'author' => array('name'=>'Uwe Steinmann', 'email'=>'uwe@steinmann.cx', 'company'=>'MMK GmbH'),
 	'config' => array(
 		'rootfolder' => array(
@@ -38,7 +38,7 @@ $EXT_CONF['paperless'] = array(
 		),
 	),
 	'constraints' => array(
-		'depends' => array('php' => '5.6.40-', 'seeddms' => array('5.1.29-5.1.99', '6.0.22-6.0.99')),
+		'depends' => array('php' => '7.4.0-', 'seeddms' => array('5.1.29-5.1.99', '6.0.22-6.0.99')),
 	),
 	'icon' => 'icon.svg',
 	'changelog' => 'changelog.md',
