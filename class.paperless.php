@@ -57,21 +57,40 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 	protected function __getDocumentData($document) { /* {{{ */
 		$fulltextservice = $this->container->fulltextservice;
+		$settings = $this->container->config;
+		$conversionmgr = $this->container->conversionmgr;
+
+		$lc = $document->getLatestContent();
 
 		$content = '';
-		$index = $fulltextservice->Indexer();
-		if($index) {
-			$lucenesearch = $fulltextservice->Search();
-			if($searchhit = $lucenesearch->getDocument($document->getID())) {
-				$idoc = $searchhit->getDocument();
-				try {
-					$content = htmlspecialchars(mb_strimwidth($idoc->getFieldValue('content'), 0, 3000, '...'));
-				} catch (Exception $e) {
+		/* The plain text can either be created by the text previewer
+		 * or taken from the fulltext index. The text from the fulltext index
+		 * does not have stop words anymore if a stop words file was
+		 * configured during indexing.
+		 */
+		if(1) {
+			$txtpreviewer = new SeedDMS_Preview_TxtPreviewer($settings->_cacheDir, $settings->_cmdTimeout, $settings->_enableXsendfile);
+			$txtpreviewer->setConversionMgr($conversionmgr);
+			if(!$txtpreviewer->hasPreview($lc))
+				$txtpreviewer->createPreview($lc);
+
+			$file = $txtpreviewer->getFileName($lc).".txt";
+			if(file_exists($file))
+				$content = file_get_contents($file);
+		} else {
+			$index = $fulltextservice->Indexer();
+			if($index) {
+				$lucenesearch = $fulltextservice->Search();
+				if($searchhit = $lucenesearch->getDocument($document->getID())) {
+					$idoc = $searchhit->getDocument();
+					try {
+						$content = htmlspecialchars(mb_strimwidth($idoc->getFieldValue('content'), 0, 3000, '...'));
+					} catch (Exception $e) {
+					}
 				}
 			}
 		}
 
-		$lc = $document->getLatestContent();
 		$cats = $document->getCategories();
 		$tags = array();
 		foreach($cats as $cat)
