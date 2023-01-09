@@ -1,7 +1,7 @@
 <?php
 $EXT_CONF['paperless'] = array(
 	'title' => 'Extents the RestAPI with method for Paperless',
-	'description' => 'This extension adds additional routes to make it behave like a paperless server',
+	'description' => 'This extension adds additional routes to make it behave like a paperless server. Just use the regular paperless apps, .e.g paperless mobile to access SeedDMS.',
 	'disable' => false,
 	'version' => '1.0.0',
 	'releasedate' => '2023-01-05',
