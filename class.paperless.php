@@ -828,11 +828,17 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$fulltextservice = $this->container->fulltextservice;
 		$notifier = $this->container->notifier;
 
-		if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
-			if(!($mfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
+		if(isset($settings->_extensions['paperless']['uploadfolder']))
+		 	$mfolder = $dms->getFolder($settings->_extensions['paperless']['uploadfolder']);
+
+		if(!$mfolder) {
+			if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
+				if(!($mfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
+					$mfolder = $dms->getFolder($settings->_rootFolderID);
+			} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($mfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
 				$mfolder = $dms->getFolder($settings->_rootFolderID);
-		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($mfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
-			$mfolder = $dms->getFolder($settings->_rootFolderID);
+		}
+
 		if($mfolder) {
 			if($mfolder->getAccessMode($userobj) < M_READWRITE)
 				return $response->withStatus(403);

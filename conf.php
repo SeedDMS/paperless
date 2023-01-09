@@ -9,7 +9,7 @@ $EXT_CONF['paperless'] = array(
 	'config' => array(
 		'rootfolder' => array(
 			'title'=>'Folder used as root folder',
-			'help'=>'This is the folder used as the base folder. Uploaded documents will be saved in this folder and all documents listed will result in fulltext search below this folder.',
+			'help'=>'This is the folder used as the base folder. Documens not below this folder will be not shown by the papeerless mobile app. Uploaded documents will be saved into this folder, unless the dedicated upload folder is set.',
 			'type'=>'select',
 			'internal'=>'folders',
 		),
@@ -17,6 +17,12 @@ $EXT_CONF['paperless'] = array(
 			'title'=>'Use the home folder as root folder',
 			'type'=>'checkbox',
 			'help'=>"Enable, if the user's home folder shall be used instead of the configured root folder.",
+		),
+		'uploadfolder' => array(
+			'title'=>'Folder where new documents are uploaded',
+			'help'=>'This is the folder where new documents will be uploaded by the paperless mobile app.',
+			'type'=>'select',
+			'internal'=>'folders',
 		),
 		'jwtsecret' => array(
 			'title'=>'Secret for JSON Web Token',
