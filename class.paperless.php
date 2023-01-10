@@ -399,24 +399,27 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if($fullsearch) {
 //			print_r($params);
 			if (isset($params["query"]) && is_string($params["query"])) {
-				if(substr($params["query"], 0, 7) == 'added:[') {
-					$q = substr($params["query"], 7, -1);
-					if($t = explode(' to ', $q, 2)) {
-						$astart = strtotime($t[0]);
-						$aend = strtotime($t[1])+86400;
-//						echo "astart: ".date('Y-m-d', $astart)."\n";
-//						echo "aend: ".date('Y-m-d', $aend);
-					}
-				} elseif(substr($params["query"], 0, 9) == 'created:[') {
-					$q = substr($params["query"], 9, -1);
-					if($t = explode(' to ', $q, 2)) {
-						$astart = strtotime($t[0]);
-						$aend = strtotime($t[1])+86400;
-//						echo "astart: ".date('Y-m-d', $astart)."\n";
-//						echo "aend: ".date('Y-m-d', $aend);
-					}
-				} else
-					$query = $params["query"];
+				$queryparts = explode(',', $params["query"]);
+				foreach($queryparts as $querypart) {
+					if(substr($querypart, 0, 7) == 'added:[') {
+						$q = substr($querypart, 7, -1);
+						if($t = explode(' to ', $q, 2)) {
+							$astart = strtotime($t[0]);
+							$aend = strtotime($t[1])+86400;
+	//						echo "astart: ".date('Y-m-d', $astart)."\n";
+	//						echo "aend: ".date('Y-m-d', $aend);
+						}
+					} elseif(substr($querypart, 0, 9) == 'created:[') {
+						$q = substr($querypart, 9, -1);
+						if($t = explode(' to ', $q, 2)) {
+							$astart = strtotime($t[0]);
+							$aend = strtotime($t[1])+86400;
+	//						echo "astart: ".date('Y-m-d', $astart)."\n";
+	//						echo "aend: ".date('Y-m-d', $aend);
+						}
+					} else
+						$query = $querypart;
+				}
 			} elseif (isset($params["title_content"]) && is_string($params["title_content"])) {
 				$query = $params['title_content'];
 			} elseif (isset($params["title__icontains"]) && is_string($params["title__icontains"])) {
@@ -496,10 +499,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					$facets = $searchresult['facets'];
 					$dcount = 0;
 					$fcount = 0;
-					if($searchresult) {
+					if($searchresult['hits']) {
 						foreach($searchresult['hits'] as $hit) {
 							if($hit['document_id'][0] == 'D') {
-								if($tmp = $dms->getDocument(substr($hit['document_id'], 1))) {
+								if($tmp = $dms->getDocument((int) substr($hit['document_id'], 1))) {
 	//								if($tmp->getAccessMode($user) >= M_READ) {
 										$tmp->verifyLastestContentExpriry();
 										$recs[] = $this->__getDocumentData($tmp);
