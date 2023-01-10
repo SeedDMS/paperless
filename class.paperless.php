@@ -488,10 +488,18 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$aend = (int) makeTsFromDate($params['added__date__lt']);
 			}
 
+			if(isset($params['created__date__gt'])) {
+				$astart = (int) makeTsFromDate($params['created__date__gt'])+86400;
+			}
+			if(isset($params['created__date__lt'])) {
+				$aend = (int) makeTsFromDate($params['created__date__lt']);
+			}
+
 			$index = $fulltextservice->Indexer();
 			if($index) {
 				$limit = isset($params['page_size']) ? (int) $params['page_size'] : 25;
 				$offset = (isset($params['page']) && $params['page'] > 0) ? ($params['page']-1)*$limit : 0;
+				$logger->log('Query is '.$query, PEAR_LOG_DEBUG);
 				$lucenesearch = $fulltextservice->Search();
 				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>$limit, 'offset'=>$offset), $order);
 				if($searchresult) {
