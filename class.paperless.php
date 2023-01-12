@@ -55,7 +55,7 @@ use Psr\Container\ContainerInterface;
 class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	protected $container;
 
-	protected function __getDocumentData($document) { /* {{{ */
+	protected function __getDocumentData($document, $truncate_content=false) { /* {{{ */
 		$fulltextservice = $this->container->fulltextservice;
 		$settings = $this->container->config;
 		$conversionmgr = $this->container->conversionmgr;
@@ -84,7 +84,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				if($searchhit = $lucenesearch->getDocument($document->getID())) {
 					$idoc = $searchhit->getDocument();
 					try {
-						$content = htmlspecialchars(mb_strimwidth($idoc->getFieldValue('content'), 0, 3000, '...'));
+						if($truncate_content)
+							$content = htmlspecialchars(mb_strimwidth($idoc->getFieldValue('content'), 0, 500, '...'));
+						else
+							$content = htmlspecialchars($idoc->getFieldValue('content'));
 					} catch (Exception $e) {
 					}
 				}
@@ -495,10 +498,15 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$aend = (int) makeTsFromDate($params['created__date__lt']);
 			}
 
+			/* Truncate content if requested
+			 * See https://github.com/paperless-ngx/paperless-ngx/blob/main/src/documents/serialisers.py
+			 */
+			$truncate_content = isset($params['truncate_content']) && ($params['truncate_content'] == 'true');
 			$index = $fulltextservice->Indexer();
 			if($index) {
 				$limit = isset($params['page_size']) ? (int) $params['page_size'] : 25;
-				$offset = (isset($params['page']) && $params['page'] > 0) ? ($params['page']-1)*$limit : 0;
+				$page = (isset($params['page']) && $params['page'] > 0) ? (int) $params['page'] : 1;
+				$offset = ($page-1)*$limit;
 				$logger->log('Query is '.$query, PEAR_LOG_DEBUG);
 				$lucenesearch = $fulltextservice->Search();
 				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>$limit, 'offset'=>$offset), $order);
@@ -513,20 +521,19 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 								if($tmp = $dms->getDocument((int) substr($hit['document_id'], 1))) {
 	//								if($tmp->getAccessMode($user) >= M_READ) {
 										$tmp->verifyLastestContentExpriry();
-										$recs[] = $this->__getDocumentData($tmp);
+										$recs[] = $this->__getDocumentData($tmp, $truncate_content);
 	//								}
 								}
 							}
 						}
 					}
-					$curpage = $params['page'];
 					if($offset + $limit < $searchresult['count']) {
-						$params['page'] = $curpage+1;
+						$params['page'] = $page+1;
 						$next = $request->getUri()->getBasePath().'/api/documents?'.http_build_query($params);
 					} else
 						$next = null;
 					if($offset > 0) {
-						$params['page'] = $curpage-1;
+						$params['page'] = $page-1;
 						$prev = $request->getUri()->getBasePath().'/api/documents?'.http_build_query($params);
 					} else
 						$prev = null;
