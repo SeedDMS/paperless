@@ -477,6 +477,8 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 							$categorynames[] = $cat->getName();
 						}
 				}
+			} elseif(isset($params['is_tagged']) && $params['is_tagged'] == '1') {
+				$categorynames[] = '*';
 			}
 
 			/* The start and end date for e.g. 2012-12-10 is
