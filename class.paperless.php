@@ -554,6 +554,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$fulltextservice = $this->container->fulltextservice;
 		$logger = $this->container->logger;
 
+		if(!empty($settings->_extensions['paperless']['autocompletefield']))
+			$field = $settings->_extensions['paperless']['autocompletefield'];
+		else
+			$field = 'title';
 		$params = $request->getQueryParams();
 		$query = $params['term'];
 		$logger->log(var_export($params, true), PEAR_LOG_DEBUG);
@@ -561,7 +565,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$list = [];
 		$index = $fulltextservice->Indexer();
 		if($index) {
-			if($terms = $index->terms($query, 'title')) {
+			if($terms = $index->terms($query, $field)) {
 				foreach($terms as $term)
 					$list[] = $term->text;
 			}

@@ -42,6 +42,14 @@ $EXT_CONF['paperless'] = array(
 			'internal'=>'categories',
 			'allow_empty'=>true,
 		),
+		'autocompletefield' => array(
+			'title'=>'Field used for autocompletion',
+			'help'=>'The terms in this field will be used when the autocomplete method is called.',
+			'type'=>'select',
+			'multiple'=>false,
+			'options'=>['title'=>'Title', 'content'=>'Content'],
+			'allow_empty'=>true,
+		),
 	),
 	'constraints' => array(
 		'depends' => array('php' => '7.4.0-', 'seeddms' => array('5.1.29-5.1.99', '6.0.22-6.0.99')),
