@@ -1055,6 +1055,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		return $response->withStatus(204);
 	} /* }}} */
 
+	/**
+	 * Currently just sets tags but receives all kind of data, which
+	 * is still disregarded.
+	 */
 	function put_documents($request, $response, $args) { /* {{{ */
 		$dms = $this->container->dms;
 		$userobj = $this->container->userobj;
@@ -1070,6 +1074,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if($document) {
 			$body = $request->getBody();
 			if($data = json_decode($body, true)) {
+				$logger->log(var_export($data, true), PEAR_LOG_DEBUG);
 				if(isset($data['tags'])) {
 					$cats = [];
 					foreach($data['tags'] as $tagid) {
