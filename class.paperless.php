@@ -547,6 +547,13 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 	} /* }}} */
 
+	/**
+	 * autocompletion is done on the last term of a list of comma separated
+	 * terms. The returned value is then a list of the first n-1 terms
+	 * concatenated with the completed terms, e.g.
+	 * 'term1 ter' will be auto completed to 'term1 term2', 'term1 term3',
+	 * etc.
+	 */
 	function autocomplete($request, $response) { /* {{{ */
 		$dms = $this->container->dms;
 		$userobj = $this->container->userobj;
@@ -559,7 +566,8 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		else
 			$field = 'title';
 		$params = $request->getQueryParams();
-		$query = $params['term'];
+		$allterms = explode(' ', $params['term']);
+		$query = trim(array_pop($allterms));
 		$logger->log(var_export($params, true), PEAR_LOG_DEBUG);
 
 		$list = [];
@@ -567,7 +575,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if($index) {
 			if($terms = $index->terms($query, $field)) {
 				foreach($terms as $term)
-					$list[] = $term->text;
+					$list[] = implode(' ', $allterms).' '.$term->text;
 			}
 		}
 
