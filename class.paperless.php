@@ -647,8 +647,6 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	} /* }}} */
 
 	function documents_thumb($request, $response, $args) { /* {{{ */
-		require_once "SeedDMS/Preview.php";
-
 		$dms = $this->container->dms;
 		$userobj = $this->container->userobj;
 		$settings = $this->container->config;
@@ -699,7 +697,6 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	 * documents which are not pdf already into pdf
 	 */
 	function documents_preview($request, $response, $args) { /* {{{ */
-		require_once "SeedDMS/Preview.php";
 		$dms = $this->container->dms;
 		$userobj = $this->container->userobj;
 		$settings = $this->container->config;
@@ -768,7 +765,6 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	} /* }}} */
 
 	function documents_download($request, $response, $args) { /* {{{ */
-		require_once "SeedDMS/Preview.php";
 		$dms = $this->container->dms;
 		$userobj = $this->container->userobj;
 		$settings = $this->container->config;
@@ -1125,7 +1121,6 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if($document) {
 			$folder = $document->getFolder();
 			/* Remove all preview images. */
-			require_once("SeedDMS/Preview.php");
 			$previewer = new SeedDMS_Preview_Previewer($settings->_cacheDir);
 			$previewer->deleteDocumentPreviews($document);
 
