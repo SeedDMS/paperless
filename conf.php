@@ -4,7 +4,7 @@ $EXT_CONF['paperless'] = array(
 	'description' => 'This extension adds additional rest api routes to make it behave like a paperless server. Just use the regular paperless apps, .e.g paperless mobile to access SeedDMS.',
 	'disable' => false,
 	'version' => '1.0.0',
-	'releasedate' => '2023-01-05',
+	'releasedate' => '2023-02-05',
 	'author' => array('name'=>'Uwe Steinmann', 'email'=>'uwe@steinmann.cx', 'company'=>'MMK GmbH'),
 	'config' => array(
 		'rootfolder' => array(
