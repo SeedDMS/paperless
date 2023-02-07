@@ -1,5 +1,4 @@
-SeedDMS paperless extension
-============================
+# SeedDMS paperless extension
 
 Paperless (and Paperless ngx) is another free document management system.
 It has a different focus than SeedDMS and misses many of the features
@@ -21,8 +20,7 @@ paperless-share
   be uploaded to the server. Once the app was started it is mostly
   invisible.
 
-How it works
--------------
+## How it works
 
 The extension adds additional routes and a so called middleware to
 the restapi. The middleware is just for handling the token based
@@ -30,21 +28,18 @@ and basic authentication of paperless. Because this middleware applies
 to all routes of the rest api, even the existing routes may use
 the new authentication methods.
 
-Restrictions
--------------
+## Restrictions
 
 The concept of paperless is quite different from SeedDMS. Fortunately,
 there are hardly any features in paperless which cannot be simulated in SeedDMS.
 Nevertheless, there are some notable differences and restrictions.
 
-Fulltext search
-````````````````
+### Fulltext search
 
 This extension use the fulltext search for most operations. Hence, ensure
 to setup fulltext search before using it.
 
-Authentication
-````````````````
+### Authentication
 
 Paperless uses a token based or http basic authentication. Both are
 implemented by another slim middleware. There is no session, but the
@@ -53,29 +48,25 @@ The password to encrypt the token can be set in the configuration, just
 like the expiration date of the token. Once the password changes all
 token will become invalid and users will have to relogin.
 
-Archive
-````````
+### Archive
 
 Paperless has the notion of an archive, which does not exist in SeedDMS.
 There is also no archive serial number.
 
-Document formats
-`````````````````
+### Document formats
 
 Paperless stores documents preferably as pdf and has a strong focus on
 scanned documents additionally run through ocr. It also does some document
 classifying based on the content. This is not supported by SeedDMS.
 
-Tags
-`````
+### Tags
 
 Tags in Paperless are equivalent to categories in SeedDMS with some restrictions.
 A category in SeedDMS does not have a color and cannot be marked as inbox tags.
 SeedDMS deriveѕ the color from the category name and keeps a list of
 categories, which are treated as inbox tags, in the configuration.
 
-Folder hierachy
-----------------
+## Folder hierachy
 
 Paperless does not have folders. Consequently, SeedDMS disolves its folder
 hierarchy and delivers all documents like they were stored in one single folder.
@@ -83,6 +74,5 @@ If a document is uploaded, it will be stored either in the root folder or a conf
 upload folder. Moving documents at its right place must be done within SeedDMS.
 Which documents are actually visible also depends on which root folder is used.
 The root folder can be set in the configuration or can be the user's home folder.
-
 
 
