@@ -183,7 +183,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					if(!empty($settings->_extensions['paperless']['tokenlivetime']))
 						$days = (int) $settings->_extensions['paperless']['tokenlivetime'];
 					else
-						$days = 1000;
+						$days = 365;
 					if(!$tokenstr = $token->jwtEncode($userobj->getId().':'.(time()+$days*84600))) {
 						return $response->withStatus(403);
 					}
