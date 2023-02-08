@@ -50,6 +50,14 @@ $EXT_CONF['paperless'] = array(
 			'options'=>['title'=>'Title', 'content'=>'Content'],
 			'allow_empty'=>true,
 		),
+		'correspondentsattr' => array(
+			'title'=>'Attribute for storing the correspondence',
+			'help'=>'This attribute stores the correspondence of a document and must have a list of correspondents.',
+			'type'=>'select',
+			'internal'=>'attributedefinitions',
+			'objtype'=>'2',
+			'allow_empty'=>true,
+		),
 	),
 	'constraints' => array(
 		'depends' => array('php' => '7.4.0-', 'seeddms' => array('5.1.29-5.1.99', '6.0.22-6.0.99')),

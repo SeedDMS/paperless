@@ -291,10 +291,29 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	} /* }}} */
 
 	function correspondents($request, $response) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$logger = $this->container->logger;
+
 		//file_put_contents("php://stdout", var_dump($request, true));
 
-		$correspondents = array(
-		);
+		$correspondents = array();
+		if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
+			$valueset = $attrdef->getValueSetAsArray();
+			foreach($valueset as $id=>$val) {
+				$correspondents[] = array(
+					'id'=>$id+1,
+					'slug'=>strtolower($val),
+					'name'=>$val,
+					'match'=>'',
+					'matching_algorithm'=>1,
+					'is_insensitive'=>true,
+					'document_count'=>0,
+					'last_correspondence'=>null
+				);
+			}
+		}
 		return $response->withJson(array('count'=>count($correspondents), 'next'=>null, 'previous'=>null, 'results'=>$correspondents), 200);
 	} /* }}} */
 
