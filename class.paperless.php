@@ -1337,6 +1337,7 @@ class SeedDMS_ExtPaperless_RestAPI { /* {{{ */
 		$app->get('/api/search/autocomplete/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':autocomplete');
 		$app->get('/api/ui_settings/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':ui_settings');
 		$app->get('/api/statstotal/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':statstotal');
+		$app->get('/api/statistics/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':statstotal');
 
 		return null;
 	} /* }}} */
