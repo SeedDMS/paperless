@@ -448,6 +448,9 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$query = $params['title__icontains'];
 			}
 
+			$limit = isset($params['page_size']) ? (int) $params['page_size'] : 25;
+			$page = (isset($params['page']) && $params['page'] > 0) ? (int) $params['page'] : 1;
+
 			$order = [];
 			if (isset($params["ordering"]) && is_string($params["ordering"])) {
 				if($params["ordering"][0] == '-') {
@@ -461,6 +464,8 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					$order['by'] = $orderfield;
 				elseif($orderfield == 'added')
 					$order['by'] = 'created';
+				elseif($orderfield == 'archive_serial_number')
+					$order['by'] = 'id';
 			}
 
 			// category
