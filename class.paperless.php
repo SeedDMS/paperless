@@ -407,19 +407,19 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$logger->log(var_export($params, true), PEAR_LOG_DEBUG);
 
 		if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
-			if(!($startfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
-				$startfolder = $dms->getFolder($settings->_rootFolderID);
-		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($startfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
-			$startfolder = $dms->getFolder($settings->_rootFolderID);
+			if(!($rootfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
+				$rootfolder = $dms->getFolder($settings->_rootFolderID);
+		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($rootfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
+			$rootfolder = $dms->getFolder($settings->_rootFolderID);
+		$startfolder = $rootfolder;
 
-		$logger->log('Searching for documents in folder '.$startfolder->getId(), PEAR_LOG_DEBUG);
+		$logger->log('Searching for documents in folder '.$rootfolder->getId(), PEAR_LOG_DEBUG);
 
 		$fullsearch = true;
 		$query = '';
 		$astart = 0;
 		$aend = 0;
 		if($fullsearch) {
-//			print_r($params);
 			if (isset($params["query"]) && is_string($params["query"])) {
 				$queryparts = explode(',', $params["query"]);
 				foreach($queryparts as $querypart) {
@@ -525,28 +525,29 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			$truncate_content = isset($params['truncate_content']) && ($params['truncate_content'] == 'true');
 			$index = $fulltextservice->Indexer();
 			if($index) {
-				$limit = isset($params['page_size']) ? (int) $params['page_size'] : 25;
-				$page = (isset($params['page']) && $params['page'] > 0) ? (int) $params['page'] : 1;
 				$offset = ($page-1)*$limit;
 				$logger->log('Query is '.$query, PEAR_LOG_DEBUG);
 				$lucenesearch = $fulltextservice->Search();
-				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>$limit, 'offset'=>$offset), $order);
+				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder), array('limit'=>$limit, 'offset'=>$offset), $order);
 				if($searchresult) {
 					$recs = array();
 					$facets = $searchresult['facets'];
 					$dcount = 0;
 					$fcount = 0;
 					if($searchresult['hits']) {
+						$allids = '';
 						foreach($searchresult['hits'] as $hit) {
 							if($hit['document_id'][0] == 'D') {
 								if($tmp = $dms->getDocument((int) substr($hit['document_id'], 1))) {
+									$allids .= $hit['document_id'].' ';
 	//								if($tmp->getAccessMode($user) >= M_READ) {
-										$tmp->verifyLastestContentExpriry();
+//										$tmp->verifyLastestContentExpriry();
 										$recs[] = $this->__getDocumentData($tmp, $truncate_content);
 	//								}
 								}
 							}
 						}
+						$logger->log('Result is '.$allids, PEAR_LOG_DEBUG);
 					}
 					if($offset + $limit < $searchresult['count']) {
 						$params['page'] = $page+1;
