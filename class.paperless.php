@@ -526,6 +526,26 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$categorynames[] = '*';
 			}
 
+			/* more_like_id is set to find similar documents */
+			if(isset($params['more_like_id'])) {
+				return $response->withJson(array('count'=>0, 'next'=>null, 'previous'=>null, 'offset'=>0, 'limit'=>$limit, 'results'=>[]), 200);
+				/* Get all documents in the same folder and subfolders */
+				$likeid = (int) $params['more_like_id'];
+				if($likeid && $likedoc = $dms->getDocument($likeid)) {
+					$startfolder = $likedoc->getFolder();
+				}
+			}
+
+			// correspondent
+			$correspondent = null;
+			if(isset($params['correspondent__id']) && $params['correspondent__id']>0) {
+				if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
+					$valueset = $attrdef->getValueSetAsArray();
+					if(isset($valueset[$params['correspondent__id']+1]))
+						$correspondent = $valueset[$params['correspondent__id']+1];
+				}
+			}
+
 			/* The start and end date for e.g. 2012-12-10 is
 			 * 2022-12-09 and 2022-12-11
 			 * Because makeTsFromDate() returns the start of the day
