@@ -3,8 +3,8 @@ $EXT_CONF['paperless'] = array(
 	'title' => 'Paperless RestAPI',
 	'description' => 'This extension adds additional rest api routes to make it behave like a paperless server. Just use the regular paperless apps, .e.g paperless mobile to access SeedDMS.',
 	'disable' => false,
-	'version' => '1.0.0',
-	'releasedate' => '2023-02-05',
+	'version' => '1.0.1',
+	'releasedate' => '2023-02-08',
 	'author' => array('name'=>'Uwe Steinmann', 'email'=>'uwe@steinmann.cx', 'company'=>'MMK GmbH'),
 	'config' => array(
 		'rootfolder' => array(
@@ -51,8 +51,16 @@ $EXT_CONF['paperless'] = array(
 			'allow_empty'=>true,
 		),
 		'correspondentsattr' => array(
-			'title'=>'Attribute for storing the correspondence',
-			'help'=>'This attribute stores the correspondence of a document and must have a list of correspondents.',
+			'title'=>'Attribute for storing the correspondent',
+			'help'=>'This attribute stores the correspondent of a document and must have a list of correspondents.',
+			'type'=>'select',
+			'internal'=>'attributedefinitions',
+			'objtype'=>'2',
+			'allow_empty'=>true,
+		),
+		'documenttypeattr' => array(
+			'title'=>'Attribute for storing the document type',
+			'help'=>'This attribute stores the document type of a document and must have a list of types.',
 			'type'=>'select',
 			'internal'=>'attributedefinitions',
 			'objtype'=>'2',
