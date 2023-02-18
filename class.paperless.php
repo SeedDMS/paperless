@@ -321,10 +321,28 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	} /* }}} */
 
 	function document_types($request, $response) { /* {{{ */
-		//file_put_contents("php://stdout", var_dump($request, true));
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$logger = $this->container->logger;
 
-		$types = array(
-		);
+		$types = array();
+		if(!empty($settings->_extensions['paperless']['documentypesattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['documentypesattr'])) {
+			$res = $attrdef->getStatistics(30);
+			print_r($res);
+			$valueset = $attrdef->getValueSetAsArray();
+			foreach($valueset as $id=>$val) {
+				$types[] = array(
+					'id'=>$id+1,
+					'slug'=>strtolower($val),
+					'name'=>$val,
+					'match'=>'',
+					'matching_algorithm'=>1,
+					'is_insensitive'=>true,
+					'document_count'=>0
+				);
+			}
+		}
 		return $response->withJson(array('count'=>count($types), 'next'=>null, 'previous'=>null, 'results'=>$types), 200);
 	} /* }}} */
 
