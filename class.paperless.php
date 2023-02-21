@@ -557,13 +557,28 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				}
 			}
 
+			$cattrs = [];
 			// correspondent
 			$correspondent = null;
 			if(isset($params['correspondent__id']) && $params['correspondent__id']>0) {
 				if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
 					$valueset = $attrdef->getValueSetAsArray();
-					if(isset($valueset[$params['correspondent__id']+1]))
-						$correspondent = $valueset[$params['correspondent__id']+1];
+					if(isset($valueset[$params['correspondent__id']-1])) {
+						$correspondent = $valueset[$params['correspondent__id']-1];
+						$cattrs[] = new SeedDMS_Core_Attribute(0, null, $attrdef, $correspondent);
+					}
+				}
+			}
+
+			// document type
+			$documenttype = null;
+			if(isset($params['document_type__id']) && $params['document_type__id']>0) {
+				if(!empty($settings->_extensions['paperless']['documenttypesattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['documenttypesattr'])) {
+					$valueset = $attrdef->getValueSetAsArray();
+					if(isset($valueset[$params['document_type__id']-1])) {
+						$documenttype = $valueset[$params['document_type__id']-1];
+						$cattrs[] = new SeedDMS_Core_Attribute(0, null, $attrdef, $documenttype);
+					}
 				}
 			}
 
@@ -595,7 +610,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$offset = ($page-1)*$limit;
 				$logger->log('Query is '.$query, PEAR_LOG_DEBUG);
 				$lucenesearch = $fulltextservice->Search();
-				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder), array('limit'=>$limit, 'offset'=>$offset), $order);
+				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder, 'attributes'=>$cattrs), array('limit'=>$limit, 'offset'=>$offset), $order);
 				if($searchresult) {
 					$recs = array();
 					$facets = $searchresult['facets'];
@@ -711,7 +726,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			} else {
 				$recs = array();
 				$facets = $searchresult['facets'];
-				$logger->log(var_export($facets, true), PEAR_LOG_DEBUG);
+//				$logger->log(var_export($facets, true), PEAR_LOG_DEBUG);
 			}
 		}
 
