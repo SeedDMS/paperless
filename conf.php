@@ -58,7 +58,7 @@ $EXT_CONF['paperless'] = array(
 			'objtype'=>'2',
 			'allow_empty'=>true,
 		),
-		'documenttypeattr' => array(
+		'documenttypesattr' => array(
 			'title'=>'Attribute for storing the document type',
 			'help'=>'This attribute stores the document type of a document and must have a list of types.',
 			'type'=>'select',
