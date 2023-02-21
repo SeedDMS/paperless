@@ -348,11 +348,11 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$logger = $this->container->logger;
 
 		$types = array();
-		if(!empty($settings->_extensions['paperless']['documentypesattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['documentypesattr'])) {
+		if(!empty($settings->_extensions['paperless']['documenttypesattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['documenttypesattr'])) {
 			$res = $attrdef->getStatistics(30);
-			print_r($res);
 			$valueset = $attrdef->getValueSetAsArray();
 			foreach($valueset as $id=>$val) {
+				$c = isset($res['frequencies']['document'][md5($val)]) ? $res['frequencies']['document'][md5($val)]['c'] : 0;
 				$types[] = array(
 					'id'=>$id+1,
 					'slug'=>strtolower($val),
@@ -360,7 +360,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					'match'=>'',
 					'matching_algorithm'=>1,
 					'is_insensitive'=>true,
-					'document_count'=>0
+					'document_count'=>$c
 				);
 			}
 		}
