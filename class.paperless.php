@@ -61,6 +61,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$conversionmgr = $this->container->conversionmgr;
 
 		$lc = $document->getLatestContent();
+		$dms = $document->getDMS();
 
 		$content = '';
 		/* The plain text can either be created by the text previewer
@@ -98,10 +99,30 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$tags = array();
 		foreach($cats as $cat)
 			$tags[] = (int) $cat->getId();
+
+		$correspondent = null;
+		if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
+			if($attr = $document->getAttribute($attrdef)) {
+				$valueset = $attrdef->getValueSetAsArray();
+				$i = array_search($attr->getValue(), $valueset);
+				if($i !== false)
+					$correspondent = $i+1;
+			}
+		}
+
+		$documenttype = null;
+		if(!empty($settings->_extensions['paperless']['documenttypesattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['documenttypesattr'])) {
+			if($attr = $document->getAttribute($attrdef)) {
+				$valueset = $attrdef->getValueSetAsArray();
+				$i = array_search($attr->getValue(), $valueset);
+				if($i !== false)
+					$documenttype = $i+1;
+			}
+		}
 		$data = array(
 			'id'=>(int)$document->getId(),
-			'correspondent'=>null,
-			'document_type'=>null,
+			'correspondent'=>$correspondent,
+			'document_type'=>$documenttype,
 			'storage_path'=>null,
 			'title'=>$document->getName(),
 			'content'=>$content,
