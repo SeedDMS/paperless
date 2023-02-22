@@ -66,6 +66,20 @@ A category in SeedDMS does not have a color and cannot be marked as inbox tags.
 SeedDMS deriveѕ the color from the category name and keeps a list of
 categories, which are treated as inbox tags, in the configuration.
 
+### Document Types
+
+There is no direct equivalent to Document Types in SeedDMS, but they can
+be easily simulated with a custom attribute. Since version 1.0.1 of this
+extension the configuration contains a parameter for an attribute which
+must be a value set containing the different document types. Do *not* make
+it a multi value attribute, because a document in Paperless may have only
+one type. Any more types while you need it or changing the order is possible.
+
+### Correspondents
+
+Just like Document Types, there is a second attribute for correspondents.
+It's implemented in SeedDMS just like document types.
+
 ## Folder hierachy
 
 Paperless does not have folders. Consequently, SeedDMS disolves its folder
