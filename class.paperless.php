@@ -565,7 +565,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					$valueset = $attrdef->getValueSetAsArray();
 					if(isset($valueset[$params['correspondent__id']-1])) {
 						$correspondent = $valueset[$params['correspondent__id']-1];
-						$cattrs[] = new SeedDMS_Core_Attribute(0, null, $attrdef, $correspondent);
+						$cattrs['attr_'.$attrdef->getId()] = $correspondent;
 					}
 				}
 			}
@@ -577,7 +577,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					$valueset = $attrdef->getValueSetAsArray();
 					if(isset($valueset[$params['document_type__id']-1])) {
 						$documenttype = $valueset[$params['document_type__id']-1];
-						$cattrs[] = new SeedDMS_Core_Attribute(0, null, $attrdef, $documenttype);
+						$cattrs['attr_'.$attrdef->getId()] = $documenttype;
 					}
 				}
 			}
