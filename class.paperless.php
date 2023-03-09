@@ -237,7 +237,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$index = $fulltextservice->Indexer();
 		if($index) {
 			$lucenesearch = $fulltextservice->Search();
-			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), array());
+			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), array());
 			if($searchresult === false) {
 				return $response->withStatus(500);
 			} else {
@@ -311,6 +311,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		return $response->withStatus(204);
 	} /* }}} */
 
+	/* FIXME: This method does not take the document status into account
+	 * It might be better to create a facet from the correspondant field
+	 * instead of calling getStatistics()
+	 */
 	function correspondents($request, $response) { /* {{{ */
 		$dms = $this->container->dms;
 		$userobj = $this->container->userobj;
@@ -610,7 +614,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$offset = ($page-1)*$limit;
 				$logger->log('Query is '.$query, PEAR_LOG_DEBUG);
 				$lucenesearch = $fulltextservice->Search();
-				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder, 'attributes'=>$cattrs), array('limit'=>$limit, 'offset'=>$offset), $order);
+				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder, 'attributes'=>$cattrs), array('limit'=>$limit, 'offset'=>$offset), $order);
 				if($searchresult) {
 					$recs = array();
 					$facets = $searchresult['facets'];
@@ -720,7 +724,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$index = $fulltextservice->Indexer();
 		if($index) {
 			$lucenesearch = $fulltextservice->Search();
-			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), array());
+			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), array());
 			if($searchresult === false) {
 				return $response->withStatus(500);
 			} else {
