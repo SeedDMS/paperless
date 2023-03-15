@@ -93,4 +93,16 @@ The root folder can be set in the configuration or can be the user's home folder
 
 There is some experimental support for searching for similar documents. This
 is done by extracting the most frequent words from the content and using them
-to query for documents.
+to issue a second query with this list of words. Since this list of most frequent
+words can be very long it will be reduced. For a word to qualify for the
+query
+
+* it must be longer than 4 characters
+* have a frequency greater 2
+
+If less than five words meet these conditions, the list will be filled up with
+subsequent words from the most frequent word list. If the than executed query
+doesn't yield a result the list will be diminished again word by word until the
+search succeeds or the query is empty.
+
+
