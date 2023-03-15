@@ -584,8 +584,9 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 						 * to the classification.
 						 * The '.' is added as valid character in a word, because solr's
 						 * standard tokenizer treats it as a valid char as well.
+						 * But sqlitefts treats '.' as a separator
 						 */
-						$wordcount = self::mb_word_count($shortcontent, MB_CASE_LOWER, '.');
+						$wordcount = self::mb_word_count($shortcontent, MB_CASE_LOWER, '');
 						arsort($wordcount);
 						$newquery = [];
 						foreach($wordcount as $word=>$n) {
@@ -594,21 +595,42 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 						}
 //						echo implode(' ', $newquery);
 						$logger->log("Query for '".implode(' ', $newquery)."'", PEAR_LOG_DEBUG);
-						$searchresult = $lucenesearch->search(implode(' ', $newquery), array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder), array('limit'=>$limit, 'offset'=>$offset), $order);
-						if($searchresult) {
-							$recs = array();
-							if($searchresult['hits']) {
-								$allids = '';
-								foreach($searchresult['hits'] as $hit) {
-									if($hit['document_id'][0] == 'D') {
-										if($tmp = $dms->getDocument((int) substr($hit['document_id'], 1))) {
-											$allids .= $hit['document_id'].' ';
-											$recs[] = $this->__getDocumentData($tmp, $truncate_content);
+						/* $newquery is empty if the document doesn't have a fulltext.
+						 * In that case it makes no sense to search for similar documents
+						 * Otherwise search for documents with newquery, but if doesn't yield
+						 * a result, short the newquery by the last term and try again until
+						 * newquery is void
+						 */
+						while($newquery) {
+							$searchresult = $lucenesearch->search(implode(' ', $newquery), array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder), array('limit'=>$limit, 'offset'=>$offset), $order);
+							if($searchresult) {
+								$recs = array();
+								if($searchresult['hits']) {
+									$allids = '';
+									foreach($searchresult['hits'] as $hit) {
+										if(($hit['document_id'][0] == 'D') && ($hit['document_id'] != 'D'.((int)$params['more_like_id']))) {
+											if($tmp = $dms->getDocument((int) substr($hit['document_id'], 1))) {
+												$allids .= $hit['document_id'].' ';
+												$recs[] = $this->__getDocumentData($tmp, $truncate_content);
+											}
+										} else {
+											$searchresult['count']--;
 										}
 									}
+									$logger->log('Result is '.$allids, PEAR_LOG_DEBUG);
+									if($recs)
+										return $response->withJson(array('count'=>$searchresult['count'], 'next'=>null, 'previous'=>null, 'offset'=>$offset, 'limit'=>$limit, 'results'=>$recs), 200);
+									else {
+										/* Still nothing found, so try a shorter query */
+										array_pop($newquery);
+									}
+								} else {
+									/* Still nothing found, so try a shorter query */
+									array_pop($newquery);
 								}
-								$logger->log('Result is '.$allids, PEAR_LOG_DEBUG);
-								return $response->withJson(array('count'=>$searchresult['count'], 'next'=>null, 'previous'=>null, 'offset'=>$offset, 'limit'=>$limit, 'results'=>$recs), 200);
+							} else {
+								/* Quit the while loop right away, if the search failed */
+								$newquery = false;
 							}
 						}
 					}
