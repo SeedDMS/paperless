@@ -89,4 +89,8 @@ upload folder. Moving documents at its right place must be done within SeedDMS.
 Which documents are actually visible also depends on which root folder is used.
 The root folder can be set in the configuration or can be the user's home folder.
 
+## Search for similar documents
 
+There is some experimental support for searching for similar documents. This
+is done by extracting the most frequent words from the content and using them
+to query for documents.
