@@ -1,4 +1,4 @@
-Changes in version 1.0.1
+Changes in version 1.1.0
 ==========================
 
 - add support for correspondents and document types
