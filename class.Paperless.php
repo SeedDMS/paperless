@@ -2,22 +2,16 @@
 /**
  * Implementation of a paperless view
  *
- * @category   DMS
  * @package    SeedDMS
- * @license    GPL2
+ * @subpackage paperless
+ * @license    GPL3
  * @author     Uwe Steinmann <uwe@steinmann.cx>
  * @copyright  Copyright (C) 2023 Uwe Steinmann
- * @version    Release: @package_version@
  */
 
 /**
  * Class to represent a paperless view
  *
- * @category   DMS
- * @package    SeedDMS
- * @author     Uwe Steinmann <uwe@steinmann.cx>
- * @copyright  Copyright (C) 2022 Uwe Steinmann
- * @version    Release: @package_version@
  */
 class SeedDMS_PaperlessView { /* {{{ */
 	/**
