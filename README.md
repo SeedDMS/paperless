@@ -28,6 +28,20 @@ and basic authentication of paperless. Because this middleware applies
 to all routes of the rest api, even the existing routes may use
 the new authentication methods.
 
+## Installation
+
+Install this extension like any other extension by uploading the
+zip file in the extension manager or copy the content of this
+repository into a directory `paperless` in SeedDMS' extension
+directory `www/ext`.
+
+Afterwards import one of the database files
+
+* paperless.sql (MySQL)
+* paperless-sqlite3.sql (SQLite3)
+
+into your database.
+
 ## Restrictions
 
 The concept of paperless is quite different from SeedDMS. Fortunately,
@@ -104,5 +118,4 @@ If less than five words meet these conditions, the list will be filled up with
 subsequent words from the most frequent word list. If the than executed query
 doesn't yield a result the list will be diminished again word by word until the
 search succeeds or the query is empty.
-
 
