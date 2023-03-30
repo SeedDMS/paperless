@@ -48,6 +48,9 @@ Afterwards import one of the database files
 
 into your database.
 
+You can test the extension by accessing `http://<your-seeddms>/restapi/index.php/api/`
+with your browser. It should return a json object containing various links.
+
 ## Restrictions
 
 The concept of paperless is quite different from SeedDMS. Fortunately,
