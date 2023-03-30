@@ -4,12 +4,12 @@ $EXT_CONF['paperless'] = array(
 	'description' => 'This extension adds additional rest api routes to make it behave like a paperless server. Just use the regular paperless apps, .e.g paperless mobile to access SeedDMS.',
 	'disable' => false,
 	'version' => '1.1.0',
-	'releasedate' => '2023-03-15',
+	'releasedate' => '2023-03-30',
 	'author' => array('name'=>'Uwe Steinmann', 'email'=>'uwe@steinmann.cx', 'company'=>'MMK GmbH'),
 	'config' => array(
 		'rootfolder' => array(
 			'title'=>'Folder used as root folder',
-			'help'=>'This is the folder used as the base folder. Documens not below this folder will be not shown by the papeerless mobile app. Uploaded documents will be saved into this folder, unless the dedicated upload folder is set.',
+			'help'=>'This is the folder used as the base folder. Documens not below this folder will not be shown by the papeerless mobile app. Uploaded documents will be saved into this folder, unless the dedicated upload folder is set.',
 			'type'=>'select',
 			'internal'=>'folders',
 		),
@@ -26,7 +26,7 @@ $EXT_CONF['paperless'] = array(
 		),
 		'jwtsecret' => array(
 			'title'=>'Secret for JSON Web Token',
-			'help'=>'This is used for creating a token which is needed to authenticate by token',
+			'help'=>'This is used for creating a secret which is needed to authenticate by token',
 			'type'=>'password',
 		),
 		'tokenlivetime' => array(
