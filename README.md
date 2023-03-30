@@ -5,11 +5,14 @@ It has a different focus than SeedDMS and misses many of the features
 of SeedDMS but there are three Android apps for uploading and browsing,
 which can be used for SeedDMS as well, if this extension is installed.
 
-All apps are available at google play and/or f-droid.
+All apps are available at
+[Google Play](https://play.google.com/store/apps) and/or [f-droid](https://f-droid.org/).
 
 paperless-mobile
   This is the youngest but most feature complete app. It has all
   the features of both apps paperless and paperless-share.
+  [Google Play](https://play.google.com/store/apps/details?id=eu.bauerj.paperless_app),
+  [f-droid](https://f-droid.org/packages/eu.bauerj.paperless_app/).
 
 paperless
   This one is already a couple of years around but development has
