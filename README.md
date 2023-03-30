@@ -8,20 +8,23 @@ which can be used for SeedDMS as well, if this extension is installed.
 All apps are available at
 [Google Play](https://play.google.com/store/apps) and/or [f-droid](https://f-droid.org/).
 
-paperless-mobile
-  This is the youngest but most feature complete app. It has all
-  the features of both apps paperless and paperless-share.
-  [Google Play](https://play.google.com/store/apps/details?id=eu.bauerj.paperless_app),
-  [f-droid](https://f-droid.org/packages/eu.bauerj.paperless_app/).
+### paperless-mobile
 
-paperless
-  This one is already a couple of years around but development has
-  slowed down a bit. It supports listing and uploading documents.
+This is the youngest but most feature complete app. It has all
+the features of both apps paperless and paperless-share.
+[Google Play](https://play.google.com/store/apps/details?id=eu.bauerj.paperless_app),
+[f-droid](https://f-droid.org/packages/eu.bauerj.paperless_app/).
 
-paperless-share
-  This app just adds a share button. Any shared document will
-  be uploaded to the server. Once the app was started it is mostly
-  invisible.
+### paperless
+
+This one is already a couple of years around but development has
+slowed down a bit. It supports listing and uploading documents.
+
+### paperless-share
+
+This app just adds a share button. Any shared document will
+be uploaded to the server. Once the app was started it is mostly
+invisible.
 
 ## How it works
 
