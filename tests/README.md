@@ -1,6 +1,6 @@
 # Testing the API
 
-This scripts can be used to test almost all endpoints of the
+These scripts can be used to test almost all endpoints of the
 paperless-ngx API.
 
 In order to use them, create a file `credentials` and define `AUTH` and
