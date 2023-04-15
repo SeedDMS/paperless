@@ -1031,8 +1031,10 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		}
 
 		if($mfolder) {
-			if($mfolder->getAccessMode($userobj) < M_READWRITE)
+			if($mfolder->getAccessMode($userobj) < M_READWRITE) {
+				$logger->log('No write access on folder '.$mfolder->getId(), PEAR_LOG_ERR);
 				return $response->withStatus(403);
+			}
 
 			$data = $request->getParsedBody();
 //			$logger->log(var_export($data, true), PEAR_LOG_DEBUG);
