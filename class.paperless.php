@@ -363,7 +363,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$settings = $this->container->config;
 		$logger = $this->container->logger;
 
-		require_once('class.Paperless.php');
+		require_once('class.PaperlessView.php');
 
 		$views = SeedDMS_PaperlessView::getAllInstances($userobj, $dms);
 
@@ -383,7 +383,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		$fulltextservice = $this->container->fulltextservice;
 		$notifier = $this->container->notifier;
 
-		require_once('class.Paperless.php');
+		require_once('class.PaperlessView.php');
 
 		$data = $request->getParsedBody();
 		$logger->log(var_export($data, true), PEAR_LOG_DEBUG);
@@ -410,7 +410,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if (!isset($args['id']) || !$args['id'])
 			return $response->withStatus(404);
 
-		require_once('class.Paperless.php');
+		require_once('class.PaperlessView.php');
 
 		$view = SeedDMS_PaperlessView::getInstance($args['id'], $dms);
 		if($view) {
