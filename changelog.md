@@ -1,3 +1,9 @@
+Changes in version 1.1.1
+==========================
+
+- some more logging
+- rename class.Paperless.php to class.PaperlessView.php
+
 Changes in version 1.1.0
 ==========================
 
