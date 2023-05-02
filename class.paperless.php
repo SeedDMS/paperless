@@ -503,6 +503,11 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					$order['by'] = 'created';
 				elseif($orderfield == 'archive_serial_number')
 					$order['by'] = 'id';
+				elseif($orderfield == 'correspondent__name') {
+					if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
+						$order['by'] = 'attr_'.$attrdef->getId();
+					}
+				}
 			}
 
 			// category
