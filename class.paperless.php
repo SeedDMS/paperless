@@ -116,7 +116,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			'checksum'=>$lc->getChecksum(),
 			'created'=>date('Y-m-d\TH:i:s+02:00', $document->getDate()),
 			'created_date'=>date('Y-m-d', $document->getDate()),
-			'modified'=>date('Y-m-d\TH:i:s+02:00', $document->getDate()),
+			'modified'=>date('Y-m-d\TH:i:s+02:00', $lc->getDate()),
 			'added'=>date('Y-m-d\TH:i:s+02:00', $document->getDate()),
 			'archive_serial_number'=> (int) $document->getId(), // was null
 			'original_file_name'=>$lc->getOriginalFileName(),
