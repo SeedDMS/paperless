@@ -68,7 +68,7 @@ $EXT_CONF['paperless'] = array(
 		),
 	),
 	'constraints' => array(
-		'depends' => array('php' => '7.4.0-', 'seeddms' => array('5.1.30-5.1.99', '6.0.23-6.0.99')),
+		'depends' => array('php' => '7.4.0-', 'seeddms' => array('5.1.31-5.1.99', '6.0.24-6.0.99')),
 	),
 	'icon' => 'icon.svg',
 	'changelog' => 'changelog.md',
