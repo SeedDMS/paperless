@@ -1,3 +1,9 @@
+Changes in version 1.1.2
+==========================
+
+- date of modification is taken from upload date of version
+- support sorting by correspondent
+
 Changes in version 1.1.1
 ==========================
 
