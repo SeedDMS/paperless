@@ -497,7 +497,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					$order['dir'] = 'asc';
 					$orderfield = $params["ordering"];
 				}
-				if(in_array($orderfield, ['created', 'title']))
+				if(in_array($orderfield, ['modified', 'created', 'title']))
 					$order['by'] = $orderfield;
 				elseif($orderfield == 'added')
 					$order['by'] = 'created';
