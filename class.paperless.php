@@ -542,7 +542,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$categorynames[] = '*';
 			}
 
-			/* more_like_id is set to find similar documents */
+			/* more_like_id is set to find similar documents {{{ */
 			if(isset($params['more_like_id'])) {
 
 				$index = $fulltextservice->Indexer();
@@ -558,7 +558,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 						$wcl = 2000;
 						$shortcontent = mb_strimwidth($fullcontent, 0, $wcl);
 
-						/* Create a list of words an its occurences to be passed
+						/* Create a list of words and its occurences to be passed
 						 * to the classification.
 						 * The '.' is added as valid character in a word, because solr's
 						 * standard tokenizer treats it as a valid char as well.
@@ -621,7 +621,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					$startfolder = $likedoc->getFolder();
 				}
 				 */
-			}
+			} /* }}} */
 
 			$cattrs = [];
 			// correspondent
