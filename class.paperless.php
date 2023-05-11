@@ -474,12 +474,15 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		$fullsearch = true;
 		$query = '';
-		$astart = 0;
-		$aend = 0;
+		$astart = $mstart = 0;
+		$aend = $mend = 0;
 		if($fullsearch) {
 			if (isset($params["query"]) && is_string($params["query"])) {
 				$queryparts = explode(',', $params["query"]);
 				foreach($queryparts as $querypart) {
+					/* 'added' is time when a document was added. This is 'created'
+					 * in the fulltext index.
+					 */
 					if(substr($querypart, 0, 7) == 'added:[') {
 						$q = substr($querypart, 7, -1);
 						if($t = explode(' to ', $q, 2)) {
@@ -488,7 +491,12 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	//						echo "astart: ".date('Y-m-d', $astart)."\n";
 	//						echo "aend: ".date('Y-m-d', $aend);
 						}
-					} elseif(substr($querypart, 0, 9) == 'created:[') {
+					}
+					/* 'created' is the time when a document was actually created.
+					 * There is no equivalent in the fulltext index.
+					 * Currently is identical to 'added'.
+					 */
+					elseif(substr($querypart, 0, 9) == 'created:[') {
 						$q = substr($querypart, 9, -1);
 						if($t = explode(' to ', $q, 2)) {
 							$astart = strtotime($t[0]);
@@ -496,8 +504,20 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	//						echo "astart: ".date('Y-m-d', $astart)."\n";
 	//						echo "aend: ".date('Y-m-d', $aend);
 						}
+					/* 'modified' is the time when a document was last modified.
+					 * This is 'modified' in the fulltext index.
+					 */
+					elseif(substr($querypart, 0, 10) == 'modified:[') {
+						$q = substr($querypart, 10, -1);
+						if($t = explode(' to ', $q, 2)) {
+							$mstart = strtotime($t[0]);
+							$mend = strtotime($t[1])+86400;
+	//						echo "mstart: ".date('Y-m-d', $mstart)."\n";
+	//						echo "mend: ".date('Y-m-d', $mend);
+						}
 					} else
 						$query = $querypart;
+					}
 				}
 			} elseif (isset($params["title_content"]) && is_string($params["title_content"])) {
 				$query = $params['title_content'];
@@ -701,7 +721,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			if($index) {
 				$logger->log('Query is '.$query, PEAR_LOG_DEBUG);
 				$lucenesearch = $fulltextservice->Search();
-				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder, 'attributes'=>$cattrs), array('limit'=>$limit, 'offset'=>$offset), $order);
+				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'modified_start'=>$mstart, 'modified_end'=>$mend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder, 'attributes'=>$cattrs), array('limit'=>$limit, 'offset'=>$offset), $order);
 				if($searchresult) {
 					$recs = array();
 					$facets = $searchresult['facets'];
