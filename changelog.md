@@ -2,7 +2,9 @@ Changes in version 1.1.2
 ==========================
 
 - date of modification is taken from upload date of version
+- add filtering by modification date
 - support sorting by correspondent
+- show warning on settings page if jwt secret is not set
 
 Changes in version 1.1.1
 ==========================
