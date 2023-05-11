@@ -22,10 +22,35 @@ class SeedDMS_ExtPaperless extends SeedDMS_ExtBase { /* {{{ */
 	 */
 	function init() { /* {{{ */
 		$GLOBALS['SEEDDMS_HOOKS']['initRestAPI'][] = new SeedDMS_ExtPaperless_RestAPI;
+		$GLOBALS['SEEDDMS_HOOKS']['view']['settings'][] = new SeedDMS_ExtPaperless_Settings;
 	} /* }}} */
 
 	function main() { /* {{{ */
 	} /* }}} */
+} /* }}} */
+
+/**
+ * Class containing method for checking the configuration
+ *
+ * @author  Uwe Steinmann <uwe@steinmann.cx>
+ * @package SeedDMS
+ * @subpackage	paperless
+ */
+class SeedDMS_ExtPaperless_Settings { /* {{{ */
+	/**
+	 * Hook for checking the configuration
+	 *
+	 * This hook is not called if the extension isn't enabled
+	 */
+	function checkConfig($view, $extname, $conf) {
+		$settings = $view->getParam('settings');
+		if($extname != 'paperless')
+			return;
+		if(empty($settings->_extensions['paperless']['jwtsecret'])) {
+			echo $view->contentSubHeading(getMLText($extname));
+			echo $view->warningMsg(getMLText('paperless_jwtsecret_not_set'));
+		}
+	}
 } /* }}} */
 
 use Psr\Container\ContainerInterface;
