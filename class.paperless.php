@@ -208,7 +208,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if($data) {
 			$userobj = $authenticator->authenticate($data['username'], $data['password']);
 			if(!$userobj)
-				return $response->withJson(array('token'=>''), 403);
+				return $response->withJson(array('non_field_errors'=>['Unable to log in with provided credentials.']), 403);
 			else {
 				if(!empty($settings->_extensions['paperless']['jwtsecret'])) {
 					$token = new SeedDMS_JwtToken($settings->_extensions['paperless']['jwtsecret']);
