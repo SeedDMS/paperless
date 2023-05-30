@@ -164,7 +164,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			'id'=>(int)$category->getId(),
 			'slug'=>strtolower($category->getName()),
 			'name'=>$category->getName(),
-			'colour'=>'#'.$color, //'#50b02c',
+			'color'=>'#'.$color, //'#50b02c',
 			'text_color'=>'#'.$this->getContrastColor($color),
 			'match'=>'',
 			'matching_algorithm'=>6,
