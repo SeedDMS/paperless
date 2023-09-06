@@ -2,4 +2,6 @@
 
 . ./credentials
 
-curl -L --silent "${URL}/fetch/doc/23311" -H "Authorization: ${AUTH}" --output 23311.pdf
+DOCID=22833
+
+curl -L --silent "${URL}/fetch/doc/${DOCID}" -H "Authorization: ${AUTH}" --output ${DOCID}.pdf
