@@ -66,6 +66,11 @@ $EXT_CONF['paperless'] = array(
 			'objtype'=>'2',
 			'allow_empty'=>true,
 		),
+		'converttopdf' => array(
+			'title'=>'Convert to PDF',
+			'type'=>'checkbox',
+			'help'=>"Enable, if you want non pdf documents to be converted to PDF if they are downloaded. Usually, this is only done for preview.",
+		),
 	),
 	'constraints' => array(
 		'depends' => array('php' => '7.4.0-', 'seeddms' => array('5.1.31-5.1.99', '6.0.24-6.0.99')),
