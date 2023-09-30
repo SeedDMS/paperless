@@ -1,3 +1,8 @@
+Changes in version 1.1.4
+==========================
+
+- fix regression in searching documents
+
 Changes in version 1.1.3
 ==========================
 
