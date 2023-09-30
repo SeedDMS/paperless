@@ -721,6 +721,17 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			$index = $fulltextservice->Indexer();
 			if($index) {
 				$logger->log('Query is '.$query, PEAR_LOG_DEBUG);
+				/*
+				$logger->log('User is '.$userobj->getLogin(), PEAR_LOG_DEBUG);
+				$logger->log('created_start is '.$astart, PEAR_LOG_DEBUG);
+				$logger->log('created_end is '.$aend, PEAR_LOG_DEBUG);
+				$logger->log('modified_start is '.$mstart, PEAR_LOG_DEBUG);
+				$logger->log('modified_end is '.$mend, PEAR_LOG_DEBUG);
+				$logger->log('startfolder is '.$startfolder->getId(), PEAR_LOG_DEBUG);
+				$logger->log('rootfolder is '.$rootfolder->getId(), PEAR_LOG_DEBUG);
+				$logger->log('limit is '.$limit, PEAR_LOG_DEBUG);
+				$logger->log('offset is '.$offset, PEAR_LOG_DEBUG);
+				 */
 				$lucenesearch = $fulltextservice->Search();
 				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'modified_start'=>$mstart, 'modified_end'=>$mend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder, 'attributes'=>$cattrs), array('limit'=>$limit, 'offset'=>$offset), $order);
 				if($searchresult) {
