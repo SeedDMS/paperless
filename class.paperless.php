@@ -150,13 +150,13 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		return $data;
 	} /* }}} */
 
-	public function getContrastColor($hexcolor) {
+	public function getContrastColor($hexcolor) { /* {{{ */
 		$r = hexdec(substr($hexcolor, 1, 2));
 		$g = hexdec(substr($hexcolor, 3, 2));
 		$b = hexdec(substr($hexcolor, 5, 2));
 		$yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
 		return ($yiq >= 148) ? '000000' : 'ffffff';
-	}
+	} /* }}} */
 
 	protected function __getCategoryData($category, $inboxtags) { /* {{{ */
 		$color = substr(md5($category->getName()), 0, 6);
@@ -504,6 +504,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	//						echo "astart: ".date('Y-m-d', $astart)."\n";
 	//						echo "aend: ".date('Y-m-d', $aend);
 						}
+					}
 					/* 'modified' is the time when a document was last modified.
 					 * This is 'modified' in the fulltext index.
 					 */
@@ -515,7 +516,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	//						echo "mstart: ".date('Y-m-d', $mstart)."\n";
 	//						echo "mend: ".date('Y-m-d', $mend);
 						}
-					} else
+					} else {
 						$query = $querypart;
 					}
 				}
