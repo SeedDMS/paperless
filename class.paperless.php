@@ -190,6 +190,8 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			'saved_views'=>$request->getUri().'saved_views/',
 			'storage_paths'=>$request->getUri().'storage_paths/',
 			'tasks'=>$request->getUri().'tasks/',
+			'mail_accounts'=>$request->getUri().'mail_accounts/',
+			'mail_rule'=>$request->getUri().'mail_rule/',
 		);
 
 		return $response->withJson($data, 200);
