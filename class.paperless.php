@@ -1052,14 +1052,22 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		if (!isset($args['id']) || !$args['id'])
 			return $response->withStatus(404);
-	
+
+		$params = $request->getQueryParams();
+		$logger->log(var_export($params, true), PEAR_LOG_DEBUG);
+
 		$logger->log('Download doc '.$args['id'], PEAR_LOG_INFO);
 		$document = $dms->getDocument($args['id']);
 		if($document) {
 			if($document->getAccessMode($userobj) >= M_READ) {
 				$lc = $document->getLatestContent();
 				if($lc) {
-					if(empty($settings->_extensions['paperless']['converttopdf']) || $lc->getMimeType() == 'application/pdf') {
+					/* Used to check if empty($settings->_extensions['paperless']['converttopdf'])
+					 * but that makes no sense any more, because paperless mobile sets
+					 * the parameter 'original=true' if the original document shall be
+					 * downloaded.
+					 */
+					if((isset($params['original']) && $params['original'] == 'true') || $lc->getMimeType() == 'application/pdf') {
 						if (pathinfo($document->getName(), PATHINFO_EXTENSION) == $lc->getFileType())
 							$filename = $document->getName();
 						else
