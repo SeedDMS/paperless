@@ -1499,7 +1499,7 @@ class SeedDMS_ExtPaperless_RestAPI_Auth { /* {{{ */
 		}
 
 		/* Pretent to be paperless ngx 1.10.0 with api version 2 */
-		$response = $response->withHeader('x-api-version', '2')->withHeader('x-version', '1.10.0');
+		$response = $response->withHeader('x-api-version', '2')->withHeader('x-version', '1.13.0');
 
 		$logger->log("Invoke paperless middleware for method ".$request->getMethod()." on '".$request->getUri()->getPath()."'", PEAR_LOG_INFO);
 		if(!in_array($request->getUri()->getPath(), array('api/token/', 'api/'))) {
