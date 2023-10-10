@@ -827,8 +827,53 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			'user_id'=>$userobj->getId(),
 			'username'=>$userobj->getLogin(),
 			'display_name'=>$userobj->getFullName(),
+			'settings'=>array(
+				'update_checking'=>array(
+					'enabled'=>false,
+					'backend_setting'=>'default'
+				),
+				'bulk_edit'=>array(
+					'apply_on_close'=>false,
+					'confirmation_dialogs'=>true
+				),
+				'documentListSize'=>50,
+				'slim_sidebar'=>false,
+				'dark_mode'=>array(
+					'use_system'=>true,
+					'enabled'=>false, // paperless-ngx 1.13.0 returns a string
+					'thumb_inverted'=>true, // paperless-ngx 1.13.0 returns a string
+				),
+				'theme'=>array(
+					'color'=>'',
+				),
+				'document_details'=>array(
+					'native_pdf_viewer'=>false,
+				),
+				'date_display'=>array(
+					'date_local'=>'',
+					'date_format'=>'mediumDate',
+				),
+				'notifications'=>array(
+					'consumer_new_documents'=>true,
+					'consumer_success'=>true,
+					'consumer_failed'=>true,
+					'consumer_suppress_on_dashboard'=>true,
+				),
+				'comments_enabled'=>true,
+				'language'=>'en-gb',
+			),
+		);
+		/*
+		$data = array(
+			'user'=>[
+				'id'=>$userobj->getId(),
+				'username'=>$userobj->getLogin(),
+				'is_superuser'=>$userobj->isAdmin(),
+				'groups'=>[]
+			],
 			'settings'=>array('update_checking'=>array('backend_setting'=>'default')),
 		);
+		*/
 		return $response->withJson($data, 200);
 	} /* }}} */
 
