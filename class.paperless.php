@@ -1563,6 +1563,7 @@ class SeedDMS_ExtPaperless_RestAPI_Auth { /* {{{ */
 			/* Set userobj to keep other middlewares for authentication from running */
 			$this->container['userobj'] = true;
 		}
+		$logger->log("End of paperless middleware for method ".$request->getMethod()." on '".$request->getUri()->getPath()."'", PEAR_LOG_INFO);
 		$response = $next($request, $response);
 		return $response;
 	} /* }}} */
