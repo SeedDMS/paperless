@@ -558,7 +558,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				}
 			}
 
-			// category
+			/* Searching for tags (category) {{{ */
 			$categories = array();
 			$categorynames = array();
 			if(isset($params['tags__id'])) {
@@ -594,6 +594,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			} elseif(isset($params['is_tagged']) && $params['is_tagged'] == '1') {
 				$categorynames[] = '*';
 			}
+			/* }}} */
 
 			/* more_like_id is set to find similar documents {{{ */
 			if(isset($params['more_like_id'])) {
@@ -676,8 +677,8 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				 */
 			} /* }}} */
 
+			/* Search for correspondent {{{ */
 			$cattrs = [];
-			// correspondent
 			$correspondent = null;
 			if(isset($params['correspondent__id']) && $params['correspondent__id']>0) {
 				if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
@@ -688,8 +689,11 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					}
 				}
 			}
+			/* Search for any correspondent (correspondent__isnull = 0) */
+			/* Search for no correspondent (correspondent__isnull = 1) */
+			/* }}} */
 
-			// document type
+			/* Search form document type {{{ */
 			$documenttype = null;
 			if(isset($params['document_type__id']) && $params['document_type__id']>0) {
 				if(!empty($settings->_extensions['paperless']['documenttypesattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['documenttypesattr'])) {
@@ -700,6 +704,9 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					}
 				}
 			}
+			/* Search for any document_type (document_type__isnull = 0) */
+			/* Search for no document_type (document_type__isnull = 1) */
+			/* }}} */
 
 			/* The start and end date for e.g. 2012-12-10 is
 			 * 2022-12-09 and 2022-12-11
