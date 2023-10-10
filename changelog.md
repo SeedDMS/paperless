@@ -1,3 +1,9 @@
+Changes in version 1.1.5
+==========================
+
+- make it work with paperless mobile >=3.0.2
+- fix downloading of original document
+
 Changes in version 1.1.4
 ==========================
 
