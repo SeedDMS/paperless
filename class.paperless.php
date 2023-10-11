@@ -940,17 +940,25 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$facets = $searchresult['facets'];
 //				$logger->log(var_export($facets, true), PEAR_LOG_DEBUG);
 			}
-		}
 
-		$data = array(
-			'documents_total'=>$searchresult['count'],
-			'document_inbox'=>0,
-		);
-		$inboxtags = [];
-		if(!empty($settings->_extensions['paperless']['inboxtags']) && $inboxtags = explode(',', $settings->_extensions['paperless']['inboxtags'])) {
-			foreach($inboxtags as $inboxtagid)
-				if($inboxtag = $dms->getDocumentCategory((int) $inboxtagid))
-					$data['document_inbox'] += (int) $facets['category'][$inboxtag->getName()];
+			$data['documents_total'] = $searchresult['count'];
+
+			$inboxtags = [];
+			if(!empty($settings->_extensions['paperless']['inboxtags']) && $inboxtags = explode(',', $settings->_extensions['paperless']['inboxtags'])) {
+				foreach($inboxtags as $inboxtagid) {
+					$cats = [];
+					if($inboxtag = $dms->getDocumentCategory((int) $inboxtagid)) {
+						$cats[] = $inboxtag->getName();
+					}
+					if($cats) {
+						$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'category'=>$cats, 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>1), array(), array('no_facets'=>true));
+						if($searchresult === false) {
+							return $response->withStatus(500);
+						}
+						$data['documents_inbox'] = $searchresult['count'];
+					}
+				}
+			}
 		}
 
 		return $response->withJson($data, 200);
