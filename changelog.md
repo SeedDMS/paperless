@@ -1,3 +1,13 @@
+Changes in version 1.2.0
+==========================
+
+- add filtering 'not set' or 'any value' for correspondent
+- editing meta data can set correspondent
+- create list of storage paths from path of folders
+- turn off facets in route 'statistics'
+- saved views can be changed
+- fix getting number of documents in inbox
+
 Changes in version 1.1.5
 ==========================
 

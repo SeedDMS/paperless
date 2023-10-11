@@ -3,7 +3,7 @@ $EXT_CONF['paperless'] = array(
 	'title' => 'Paperless RestAPI',
 	'description' => 'This extension adds additional rest api routes to make it behave like a paperless server. Just use the regular paperless apps, .e.g paperless mobile to access SeedDMS.',
 	'disable' => false,
-	'version' => '1.1.5',
+	'version' => '1.2.0',
 	'releasedate' => '2023-10-10',
 	'author' => array('name'=>'Uwe Steinmann', 'email'=>'uwe@steinmann.cx', 'company'=>'MMK GmbH'),
 	'config' => array(
@@ -73,7 +73,7 @@ $EXT_CONF['paperless'] = array(
 		),
 	),
 	'constraints' => array(
-		'depends' => array('php' => '7.4.0-', 'seeddms' => array('5.1.31-5.1.99', '6.0.24-6.0.99')),
+		'depends' => array('php' => '7.4.0-', 'seeddms' => array('5.1.33-5.1.99', '6.0.26-6.0.99')),
 	),
 	'icon' => 'icon.svg',
 	'changelog' => 'changelog.md',
