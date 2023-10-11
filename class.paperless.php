@@ -458,17 +458,59 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		$view = SeedDMS_PaperlessView::getInstance($args['id'], $dms);
 		if($view) {
-			$logger->log('remove saved view', PEAR_LOG_INFO);
+			$logger->log("remove saved view '".$view->getView()['name']."'", PEAR_LOG_INFO);
 			$view->remove();
 		}
 		return $response->withStatus(204);
 	} /* }}} */
 
-	function storage_paths($request, $response) { /* {{{ */
-		//file_put_contents("php://stdout", var_dump($request, true));
+	function patch_saved_views($request, $response, $args) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$conversionmgr = $this->container->conversionmgr;
+		$logger = $this->container->logger;
+		$notifier = $this->container->notifier;
 
-		$paths = array(
-		);
+		if (!isset($args['id']) || !$args['id'])
+			return $response->withStatus(404);
+
+		require_once('class.PaperlessView.php');
+
+		$data = $request->getParsedBody();
+		$logger->log(var_export($data, true), PEAR_LOG_DEBUG);
+
+		$view = SeedDMS_PaperlessView::getInstance($args['id'], $dms);
+		if($view) {
+			$logger->log('patch saved view', PEAR_LOG_INFO);
+			$view->setView($data);
+			$view->save();
+		}
+		return $response->withJson($view->getView(), 200);
+	} /* }}} */
+
+	function storage_paths($request, $response) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$logger = $this->container->logger;
+
+		if(!empty($settings->_extensions['paperless']['usehomefolder'])) {
+			if(!($rootfolder = $dms->getFolder((int) $userobj->getHomeFolder())))
+				$rootfolder = $dms->getFolder($settings->_rootFolderID);
+		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($rootfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
+			$rootfolder = $dms->getFolder($settings->_rootFolderID);
+
+		$folderprocess = new SeedDMS_ExtPaperless_Process_Folder();
+//		call_user_func(array($folderprocess, 'process'), $folder, -1);
+		$tree = new SeedDMS_FolderTree($rootfolder, array($folderprocess, 'process'));
+		$list = $folderprocess->getList();
+		$paths = array();
+
+		foreach($list as $fid=>$path) {
+			if($path[1] > 0)
+				$paths[] = array('id'=>(int)$fid, 'name'=>$path[0], 'slug'=>$path[0], 'path'=>$path[0], 'match'=>'', 'matching_algorithm'=>6, 'is_insensitive'=>true, 'document_count'=>$path[1]);
+		}
 		return $response->withJson(array('count'=>count($paths), 'next'=>null, 'previous'=>null, 'results'=>$paths), 200);
 	} /* }}} */
 
@@ -1654,6 +1696,7 @@ class SeedDMS_ExtPaperless_RestAPI { /* {{{ */
 		$app->get('/api/saved_views/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':saved_views');
 		$app->post('/api/saved_views/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':post_saved_views');
 		$app->delete('/api/saved_views/{id}/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':delete_saved_views');
+		$app->patch('/api/saved_views/{id}/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':patch_saved_views');
 		$app->get('/api/storage_paths/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':storage_paths');
 		$app->post('/api/documents/post_document/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':post_document');
 		$app->get('/api/documents/{id}/preview/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_preview');
