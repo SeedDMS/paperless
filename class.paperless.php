@@ -767,7 +767,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 				$logger->log('offset is '.$offset, PEAR_LOG_DEBUG);
 				 */
 				$lucenesearch = $fulltextservice->Search();
-				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'modified_start'=>$mstart, 'modified_end'=>$mend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder, 'attributes'=>$cattrs), array('limit'=>$limit, 'offset'=>$offset), $order);
+				$searchresult = $lucenesearch->search($query, array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'category'=>$categorynames, 'created_start'=>$astart, 'created_end'=>$aend, 'modified_start'=>$mstart, 'modified_end'=>$mend, 'startFolder'=>$startfolder, 'rootFolder'=>$rootfolder, 'attributes'=>$cattrs), array('limit'=>$limit, 'offset'=>$offset), $order, array('no_facets'=>true));
 				if($searchresult) {
 					$recs = array();
 					$facets = $searchresult['facets'];
@@ -919,10 +919,15 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		} elseif(!isset($settings->_extensions['paperless']['rootfolder']) || !($startfolder = $dms->getFolder($settings->_extensions['paperless']['rootfolder'])))
 			$startfolder = $dms->getFolder($settings->_rootFolderID);
 
+		$data = array(
+			'documents_total'=>0,
+			'documents_inbox'=>0,
+		);
+
 		$index = $fulltextservice->Indexer();
 		if($index) {
 			$lucenesearch = $fulltextservice->Search();
-			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>20), array());
+			$searchresult = $lucenesearch->search('', array('record_type'=>['document'], 'status'=>[2], 'user'=>[$userobj->getLogin()], 'startFolder'=>$startfolder, 'rootFolder'=>$startfolder), array('limit'=>1), array(), array('no_facets'=>true));
 			if($searchresult === false) {
 				return $response->withStatus(500);
 			} else {
