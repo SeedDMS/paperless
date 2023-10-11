@@ -733,6 +733,11 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			/* Search for no document_type (document_type__isnull = 1) */
 			/* }}} */
 
+			if(isset($params['storage_path__id']) && $params['storage_path__id']>0) {
+				if($f = $dms->getFolder((int) $params['storage_path__id']))
+					$startfolder = $f;
+			}
+
 			/* The start and end date for e.g. 2012-12-10 is
 			 * 2022-12-09 and 2022-12-11
 			 * Because makeTsFromDate() returns the start of the day
