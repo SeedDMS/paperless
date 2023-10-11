@@ -55,6 +55,23 @@ class SeedDMS_ExtPaperless_Settings { /* {{{ */
 
 use Psr\Container\ContainerInterface;
 
+class SeedDMS_ExtPaperless_Process_Folder { /* {{{ */
+	protected $list;
+
+	public function __construct() {
+		$this->list = [];
+	}
+
+	public function process($folder, $depth=0) { /* {{{ */
+		// FIXME: hasDocuments() contains also documents not in status=2
+		$this->list[$folder->getId()] = [$folder->getFolderPathPlain(true, '/'), $folder->hasDocuments()];
+	} /* }}} */
+
+	public function getList() { /* {{{ */
+		return $this->list;
+	} /* }}} */
+} /* }}} */
+
 class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 	protected $container;
 
