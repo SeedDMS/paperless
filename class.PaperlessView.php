@@ -109,6 +109,10 @@ class SeedDMS_PaperlessView { /* {{{ */
 		return $this->_view;
 	} /* }}} */
 
+	public function setView($view) { /* {{{ */
+		$this->_view = $view;
+	} /* }}} */
+
 	/*
 	 * Add a new to the database.
 	 *
@@ -122,6 +126,11 @@ class SeedDMS_PaperlessView { /* {{{ */
 				return false;
 			}
 			$this->_id = $db->getInsertID();
+		} else {
+			$queryStr = "UPDATE `tblPaperlessView` SET `view`=".$db->qstr(json_encode($this->_view))." WHERE `id`=".$this->_id;
+			if (!$db->getResult($queryStr)) {
+				return false;
+			}
 		}
 
     return self::getInstance($this->_id, $this->_dms);
