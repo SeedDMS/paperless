@@ -1475,6 +1475,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 		if($document) {
 			$body = $request->getBody();
 			if($data = json_decode($body, true)) {
+				$updatefulltext = false;
 				$logger->log(var_export($data, true), PEAR_LOG_DEBUG);
 				if(isset($data['tags'])) {
 					$cats = [];
@@ -1485,6 +1486,21 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 					}
 					if(!$document->setCategories($cats))
 						return $response->withStatus(500);
+					$updatefulltext = true;
+				}
+				if(isset($data['correspondent'])) {
+					if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
+						$valueset = $attrdef->getValueSetAsArray();
+						if(isset($valueset[$data['correspondent']-1])) {
+							$attrvalue = $valueset[$data['correspondent']-1];
+							$logger->log('set attribute '.$attrdef->getName().' to '.$attrvalue, PEAR_LOG_DEBUG);
+							if(!$document->setAttributeValue($attrdef, $attrvalue)) {
+							}
+							$updatefulltext = true;
+						}
+					}
+				}
+				if($updatefulltext) {
 					if($fulltextservice && ($index = $fulltextservice->Indexer())) {
 						$idoc = $fulltextservice->IndexedDocument($document);
 //						if(false !== $this->callHook('preIndexDocument', $document, $idoc)) {
