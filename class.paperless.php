@@ -1019,7 +1019,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		if (!isset($args['id']) || !$args['id'])
 			return $response->withStatus(404);
-	
+
 		$document = $dms->getDocument($args['id']);
 		if($document) {
 			if($document->getAccessMode($userobj) >= M_READ) {
@@ -1069,7 +1069,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		if (!isset($args['id']) || !$args['id'])
 			return $response->withStatus(404);
-	
+
 		$logger->log('Get preview of doc '.$args['id'], PEAR_LOG_INFO);
 		$document = $dms->getDocument($args['id']);
 		if($document) {
@@ -1214,7 +1214,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 		if (!isset($args['id']) || !$args['id'])
 			return $response->withStatus(404);
-	
+
 		$document = $dms->getDocument($args['id']);
 		if($document) {
 			if($document->getAccessMode($userobj) >= M_READ) {
@@ -1451,7 +1451,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 //						}
 					}
 				}
-			} 
+			}
 		}
 		return $response->withStatus(204);
 	} /* }}} */
@@ -1497,7 +1497,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 //						}
 					}
 				}
-			} 
+			}
 		}
 		return $response->withJson($this->__getDocumentData($document), 200);
 	} /* }}} */
