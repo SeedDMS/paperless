@@ -112,7 +112,16 @@ upload folder. Moving documents at its right place must be done within SeedDMS.
 Which documents are actually visible also depends on which root folder is used.
 The root folder can be set in the configuration or can be the user's home folder.
 
-## Search for similar documents
+Well, paperless seems to have a different concept called 'storage path'. Though
+that's not like folder paths in SeedDMS but it's worth a try to map the both.
+Since version 1.2.0 of this extension, there storage paths will resolve on folder
+paths in SeedDMS.
+
+## Searching for documents
+
+The extension enforces any search to be limited to released documents.
+
+## Searching for similar documents
 
 There is some experimental support for searching for similar documents. This
 is done by extracting the most frequent words from the content and using them
@@ -127,4 +136,11 @@ If less than five words meet these conditions, the list will be filled up with
 subsequent words from the most frequent word list. If the than executed query
 doesn't yield a result the list will be diminished again word by word until the
 search succeeds or the query is empty.
+
+## Changing meta data
+
+The app paperless-mobile has support for editing meta data and even the content
+of a document. Currently, this extension only supports editing the correspondent
+and the tags of a document. All other changes made in paperless mobile we be
+disregarded.
 
