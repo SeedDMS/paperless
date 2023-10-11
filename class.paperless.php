@@ -697,17 +697,25 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 			/* Search for correspondent {{{ */
 			$cattrs = [];
 			$correspondent = null;
-			if(isset($params['correspondent__id']) && $params['correspondent__id']>0) {
-				if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
+			if(!empty($settings->_extensions['paperless']['correspondentsattr']) && $attrdef = $dms->getAttributeDefinition($settings->_extensions['paperless']['correspondentsattr'])) {
+				if(isset($params['correspondent__id']) && $params['correspondent__id']>0) {
 					$valueset = $attrdef->getValueSetAsArray();
 					if(isset($valueset[$params['correspondent__id']-1])) {
 						$correspondent = $valueset[$params['correspondent__id']-1];
 						$cattrs['attr_'.$attrdef->getId()] = $correspondent;
 					}
 				}
+
+				/* Search for any correspondent (correspondent__isnull = 0) */
+				if(isset($params['correspondent__isnull']) && $params['correspondent__isnull'] == '0') {
+					$cattrs['attr_'.$attrdef->getId()] = '__any__';
+
+				}
+				/* Search for no correspondent (correspondent__isnull = 1) */
+				if(isset($params['correspondent__isnull']) && $params['correspondent__isnull'] == '1') {
+					$cattrs['attr_'.$attrdef->getId()] = '__notset__';
+				}
 			}
-			/* Search for any correspondent (correspondent__isnull = 0) */
-			/* Search for no correspondent (correspondent__isnull = 1) */
 			/* }}} */
 
 			/* Search form document type {{{ */
