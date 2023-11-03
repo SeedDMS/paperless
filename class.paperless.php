@@ -853,6 +853,28 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 
 	} /* }}} */
 
+	function document($request, $response, $args) { /* {{{ */
+		$dms = $this->container->dms;
+		$userobj = $this->container->userobj;
+		$settings = $this->container->config;
+		$fulltextservice = $this->container->fulltextservice;
+		$logger = $this->container->logger;
+
+		if (!isset($args['id']) || !$args['id'])
+			return $response->withStatus(404);
+
+		$document = $dms->getDocument($args['id']);
+		if($document) {
+			if($document->getAccessMode($userobj) >= M_READ) {
+				$rec = $this->__getDocumentData($document, true);
+				return $response->withJson($rec, 200);
+			} else {
+				return $response->withStatus(404);
+			}
+		}
+		return $response->withJson('Error', 500);
+	} /* }}} */
+
 	/**
 	 * autocompletion is done on the last term of a list of comma separated
 	 * terms. The returned value is then a list of the first n-1 terms
@@ -1230,6 +1252,7 @@ class SeedDMS_ExtPaperless_RestAPI_Controller { /* {{{ */
 						'archive_checksum'=>$lc->getChecksum(),
 						'archive_media_filename'=>$lc->getOriginalFileName(),
 						'original_filename'=>$lc->getOriginalFileName(),
+						'lang'=>'en',
 						'archive_size'=>(int) $lc->getFilesize(),
 						'archive_metadata'=>[],
 					), 200);
@@ -1718,6 +1741,7 @@ class SeedDMS_ExtPaperless_RestAPI { /* {{{ */
 		$app->get('/api/documents/{id}/preview/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_preview');
 		$app->get('/api/documents/{id}/thumb/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_thumb');
 		$app->get('/fetch/thumb/{id}', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':fetch_thumb');
+		$app->get('/api/documents/{id}/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':document');
 		$app->get('/api/documents/{id}/download/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_download');
 		$app->get('/api/documents/{id}/metadata/', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':documents_metadata');
 		$app->get('/fetch/doc/{id}', \SeedDMS_ExtPaperless_RestAPI_Controller::class.':fetch_doc');
