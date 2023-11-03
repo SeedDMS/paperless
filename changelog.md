@@ -1,3 +1,8 @@
+Changes in version 1.2.1
+==========================
+
+- implement /api/documents/{id}/
+
 Changes in version 1.2.0
 ==========================
 
