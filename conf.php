@@ -9,7 +9,7 @@ $EXT_CONF['paperless'] = array(
 	'config' => array(
 		'rootfolder' => array(
 			'title'=>'Folder used as root folder',
-			'help'=>'This is the folder used as the base folder. Documens not below this folder will not be shown by the papeerless mobile app. Uploaded documents will be saved into this folder, unless the dedicated upload folder is set.',
+			'help'=>'This is the folder used as the base folder. Documens not below this folder will not be shown by the paperless mobile app. Uploaded documents will be saved into this folder, unless the dedicated upload folder is set.',
 			'type'=>'select',
 			'internal'=>'folders',
 		),
